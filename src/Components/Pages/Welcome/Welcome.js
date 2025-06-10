@@ -3,9 +3,12 @@ import { useEffect, useState } from "react";
 import firebaseApp from "../../Firebase/initialize";
 import Card from "../../UI/Card";
 import UpdateProfile from "./UpdateProfile";
+import { useNavigate } from "react-router";
 
 const Welcome = () => {
   const [user, setUser] = useState(null);
+  const [toggleUpdateProfileForm, setToggleUpdateProfileForm] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscibe = onAuthStateChanged(getAuth(firebaseApp), (cur_user) => {
@@ -17,17 +20,24 @@ const Welcome = () => {
 
   const logoutHandler = async () => {
     await signOut(getAuth(firebaseApp));
+    navigate("/login");
   };
 
   return (
     <Card className="text-light">
       {user ? (
         <div>
+          <button
+            onClick={logoutHandler}
+            className="position-absolute top-0 end-0 m-5"
+          >
+            Logout
+          </button>
           <p>
-            {user.displayName ? `${user.displayName},` : "hi!"} Welcome to
-            Expense Tracker{" "}
+            {user.displayName ? `Hi ${user.displayName},` : "!"} Welcome to
+            Expense Tracker!{" "}
           </p>
-          <button onClick={logoutHandler}>Logout</button>
+
           {user.photoURL ? (
             <img
               src={user.photoURL}
@@ -38,7 +48,19 @@ const Welcome = () => {
           ) : (
             " "
           )}
-          <UpdateProfile />
+          {!toggleUpdateProfileForm && (
+            <button
+              className="m-3"
+              onClick={() =>
+                setToggleUpdateProfileForm(!toggleUpdateProfileForm)
+              }
+            >
+              Update Profile
+            </button>
+          )}
+          {toggleUpdateProfileForm && (
+            <UpdateProfile setToggleUpdateProfileForm />
+          )}
         </div>
       ) : (
         <p>Please Login</p>

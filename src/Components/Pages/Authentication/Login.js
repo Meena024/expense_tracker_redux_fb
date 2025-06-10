@@ -1,7 +1,7 @@
 import { Form } from "react-bootstrap";
 import Card from "../../UI/Card";
 import classes from "./SignUp.module.css";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import firebaseApp from "../../Firebase/initialize";
@@ -10,6 +10,7 @@ const Login = () => {
   const mailRef = useRef(null);
   const passref = useRef(null);
 
+  const navigate = useNavigate();
   const loginHandler = (e) => {
     e.preventDefault();
     const login_details = {
@@ -32,6 +33,7 @@ const Login = () => {
     };
 
     handleLogin();
+    navigate("/welcome");
   };
 
   return (
@@ -76,7 +78,7 @@ const Login = () => {
           </button>
         </div>
       </Form>
-      <Link className={classes.link} to="/login">
+      <Link className={classes.link} to="/signup">
         Create a new account? SIGN UP
       </Link>
     </Card>

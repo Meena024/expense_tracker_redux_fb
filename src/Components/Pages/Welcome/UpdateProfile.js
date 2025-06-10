@@ -4,7 +4,7 @@ import classes from "../Authentication/SignUp.module.css";
 import { Form } from "react-bootstrap";
 import { updateProfile, getAuth } from "firebase/auth";
 
-const UpdateProfile = () => {
+const UpdateProfile = ({ setToggleUpdateProfileForm }) => {
   const nameRef = useRef(null);
   const imgURLRef = useRef(null);
 
@@ -64,7 +64,10 @@ const UpdateProfile = () => {
         </div>
 
         <div className="d-flex justify-content-center m-3">
-          <button type="submit">Update Profile</button>
+          <button type="submit" className="m-2">
+            Update Profile
+          </button>
+          <button className="m-2">Cancel</button>
         </div>
       </Form>
     </Card>
