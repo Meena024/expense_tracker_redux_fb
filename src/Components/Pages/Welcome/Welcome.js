@@ -1,7 +1,8 @@
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useEffect, useState } from "react";
-import firebaseApp from "../Firebase/initialize";
-import Card from "../UI/Card";
+import firebaseApp from "../../Firebase/initialize";
+import Card from "../../UI/Card";
+import UpdateProfile from "./UpdateProfile";
 
 const Welcome = () => {
   const [user, setUser] = useState(null);
@@ -22,8 +23,22 @@ const Welcome = () => {
     <Card className="text-light">
       {user ? (
         <div>
-          <p>Welcome to Expense Tracker, {user.email}</p>
+          <p>
+            {user.displayName ? `${user.displayName},` : "hi!"} Welcome to
+            Expense Tracker{" "}
+          </p>
           <button onClick={logoutHandler}>Logout</button>
+          {user.photoURL ? (
+            <img
+              src={user.photoURL}
+              className="rounded mx-auto d-block m-2"
+              alt=""
+              style={{ width: "70%", height: "70%", objectFit: "cover" }}
+            />
+          ) : (
+            " "
+          )}
+          <UpdateProfile />
         </div>
       ) : (
         <p>Please Login</p>

@@ -1,7 +1,7 @@
 import SignUp from "./Pages/Authentication/SignUp";
 import Login from "./Pages/Authentication/Login";
 import { BrowserRouter } from "react-router-dom";
-import Welcome from "./Pages/Welcome";
+import Welcome from "./Pages/Welcome/Welcome";
 
 const Main = () => {
   return (
