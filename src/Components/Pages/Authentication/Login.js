@@ -3,6 +3,8 @@ import Card from "../../UI/Card";
 import classes from "./SignUp.module.css";
 import { Link } from "react-router";
 import { useRef } from "react";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import firebaseApp from "../../Firebase/initialize";
 
 const Login = () => {
   const mailRef = useRef(null);
@@ -14,7 +16,22 @@ const Login = () => {
       email: mailRef.current.value,
       password: passref.current.value,
     };
-    console.log(login_details);
+    // console.log(login_details);
+
+    const handleLogin = async () => {
+      try {
+        await signInWithEmailAndPassword(
+          getAuth(firebaseApp),
+          login_details.email,
+          login_details.password
+        );
+        // console.log("Logged In");
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+
+    handleLogin();
   };
 
   return (
