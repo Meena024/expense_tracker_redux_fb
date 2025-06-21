@@ -4,6 +4,7 @@ import { useRef } from "react";
 import classes from "../Authentication/SignUp.module.css";
 import { setExpense } from "../../Store/Slices/ExpenseSlice";
 import { useDispatch } from "react-redux";
+import { addExpense } from "../../Store/Slices/ExpenseSliceThunk";
 
 const AddExpense = () => {
   const amountRef = useRef();
@@ -11,7 +12,7 @@ const AddExpense = () => {
   const categoryRef = useRef();
   const dispatch = useDispatch();
 
-  const addExpenseHandler = (e) => {
+  const addExpenseHandler = async (e) => {
     e.preventDefault();
 
     const exp = {
@@ -20,7 +21,13 @@ const AddExpense = () => {
       category: categoryRef.current.value,
     };
     console.log(exp);
-    dispatch(setExpense(exp));
+    try {
+      const expId = await addExpense(exp);
+      dispatch(setExpense({ ...exp, id: expId }));
+    } catch (err) {
+      alert("Failed to add expense: " + err);
+    }
+    // dispatch(setExpense(exp));
   };
 
   return (
