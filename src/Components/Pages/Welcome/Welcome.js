@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import Card from "../../UI/Card";
 import UpdateProfile from "./UpdateProfile";
-import { useNavigate } from "react-router";
-import { handlerLogout, authActions } from "../../Store/Slices/AuthSlice";
+import { authActions } from "../../Store/Slices/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { setToggleProfileForm } from "../../Store/Slices/ProfileSlice";
 import { auth } from "../../Firebase/initialize";
@@ -12,7 +11,6 @@ const Welcome = () => {
   const toggleProfileForm = useSelector(
     (state) => state.Profile.toggleProfileForm
   );
-  const navigate = useNavigate();
   const user = useSelector((state) => state.Auth.user);
 
   useEffect(() => {
@@ -32,22 +30,10 @@ const Welcome = () => {
     }
   }, [dispatch]);
 
-  const logoutHandler = async () => {
-    await dispatch(handlerLogout());
-    await dispatch(authActions.setUser(null));
-    navigate("/login");
-  };
-
   return (
-    <Card className="text-light">
+    <Card className="text-light m-5">
       {user ? (
         <div>
-          <button
-            onClick={logoutHandler}
-            className="position-absolute top-0 end-0 m-5"
-          >
-            Logout
-          </button>
           <p>
             {user.displayName ? `Hi ${user.displayName},` : "!"} Welcome to
             Expense Tracker!
