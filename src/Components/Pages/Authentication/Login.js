@@ -3,37 +3,32 @@ import Card from "../../UI/Card";
 import classes from "./SignUp.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useRef } from "react";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import firebaseApp from "../../Firebase/initialize";
+import { useDispatch } from "react-redux";
+import { handleLogin, authActions } from "../../Store/Slices/AuthSlice";
 
 const Login = () => {
   const mailRef = useRef(null);
   const passref = useRef(null);
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const loginHandler = (e) => {
+
+  const loginHandler = async (e) => {
     e.preventDefault();
-    const login_details = {
-      email: mailRef.current.value,
-      password: passref.current.value,
-    };
-    // console.log(login_details);
+    const email = mailRef.current.value;
+    const password = passref.current.value;
 
-    const handleLogin = async () => {
-      try {
-        await signInWithEmailAndPassword(
-          getAuth(firebaseApp),
-          login_details.email,
-          login_details.password
-        );
-        // console.log("Logged In");
-      } catch (err) {
-        console.log(err.message);
-      }
-    };
+    const resultAction = await dispatch(handleLogin({ email, password }));
 
-    handleLogin();
-    navigate("/welcome");
+    if (handleLogin.fulfilled.match(resultAction)) {
+      dispatch(authActions.setUser(resultAction));
+      console.log("login user:", resultAction);
+      navigate("/welcome");
+    } else {
+      console.error(
+        "Login failed:",
+        resultAction.payload || resultAction.error?.message
+      );
+    }
   };
 
   return (

@@ -3,12 +3,17 @@ import Card from "../../UI/Card";
 import classes from "../Authentication/SignUp.module.css";
 import { Form } from "react-bootstrap";
 import { updateProfile, getAuth } from "firebase/auth";
+import { setToggleProfileForm } from "../../Store/Slices/ProfileSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../../Store/Slices/AuthSlice";
 
-const UpdateProfile = ({ setToggleUpdateProfileForm }) => {
+const UpdateProfile = () => {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.Auth.user);
   const nameRef = useRef(null);
   const imgURLRef = useRef(null);
 
-  const updateProfileHandler = (e) => {
+  const updateProfileHandler = async (e) => {
     e.preventDefault();
     const name = nameRef.current.value;
     const photoURL = imgURLRef.current.value;
@@ -24,8 +29,17 @@ const UpdateProfile = ({ setToggleUpdateProfileForm }) => {
         console.log("Profile update error:", err.message);
       }
     };
-    updateProfil();
-    console.log(getAuth().currentUser);
+    await updateProfil();
+    const user = getAuth().currentUser;
+    const cur_user = {
+      displayName: user.displayName,
+      email: user.email,
+      photoURL: user.photoURL,
+      uid: user.uid,
+    };
+    console.log("updated user:", cur_user, user);
+    dispatch(authActions.setUser(cur_user));
+    dispatch(setToggleProfileForm());
   };
   return (
     <Card className="my-5">
@@ -43,6 +57,7 @@ const UpdateProfile = ({ setToggleUpdateProfileForm }) => {
               placeholder="Your Name"
               ref={nameRef}
               autoComplete="name"
+              defaultValue={user?.displayName || ""}
             />
           </div>
         </div>
@@ -59,6 +74,7 @@ const UpdateProfile = ({ setToggleUpdateProfileForm }) => {
               placeholder="URL here"
               ref={imgURLRef}
               autoComplete="url"
+              defaultValue={user?.photoURL || ""}
             />
           </div>
         </div>
@@ -67,7 +83,13 @@ const UpdateProfile = ({ setToggleUpdateProfileForm }) => {
           <button type="submit" className="m-2">
             Update Profile
           </button>
-          <button className="m-2">Cancel</button>
+          <button
+            className="m-2"
+            type="button"
+            onClick={() => dispatch(setToggleProfileForm())}
+          >
+            Cancel
+          </button>
         </div>
       </Form>
     </Card>

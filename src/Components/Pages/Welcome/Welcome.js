@@ -1,25 +1,40 @@
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { useEffect, useState } from "react";
-import firebaseApp from "../../Firebase/initialize";
+import { useEffect } from "react";
 import Card from "../../UI/Card";
 import UpdateProfile from "./UpdateProfile";
 import { useNavigate } from "react-router";
+import { handlerLogout, authActions } from "../../Store/Slices/AuthSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setToggleProfileForm } from "../../Store/Slices/ProfileSlice";
+import { auth } from "../../Firebase/initialize";
 
 const Welcome = () => {
-  const [user, setUser] = useState(null);
-  const [toggleUpdateProfileForm, setToggleUpdateProfileForm] = useState(false);
+  const dispatch = useDispatch();
+  const toggleProfileForm = useSelector(
+    (state) => state.Profile.toggleProfileForm
+  );
   const navigate = useNavigate();
+  const user = useSelector((state) => state.Auth.user);
 
   useEffect(() => {
-    const unsubscibe = onAuthStateChanged(getAuth(firebaseApp), (cur_user) => {
-      setUser(cur_user);
-      console.log(cur_user);
-    });
-    return () => unsubscibe();
-  }, []);
+    const currentUser = auth.currentUser;
+
+    if (currentUser) {
+      currentUser.reload().then(() => {
+        dispatch(
+          authActions.setUser({
+            email: currentUser.email,
+            displayName: currentUser.displayName,
+            photoURL: currentUser.photoURL,
+            uid: currentUser.uid,
+          })
+        );
+      });
+    }
+  }, [dispatch]);
 
   const logoutHandler = async () => {
-    await signOut(getAuth(firebaseApp));
+    await dispatch(handlerLogout());
+    await dispatch(authActions.setUser(null));
     navigate("/login");
   };
 
@@ -35,9 +50,8 @@ const Welcome = () => {
           </button>
           <p>
             {user.displayName ? `Hi ${user.displayName},` : "!"} Welcome to
-            Expense Tracker!{" "}
+            Expense Tracker!
           </p>
-
           {user.photoURL ? (
             <img
               src={user.photoURL}
@@ -48,19 +62,15 @@ const Welcome = () => {
           ) : (
             " "
           )}
-          {!toggleUpdateProfileForm && (
+          {!toggleProfileForm && (
             <button
               className="m-3"
-              onClick={() =>
-                setToggleUpdateProfileForm(!toggleUpdateProfileForm)
-              }
+              onClick={() => dispatch(setToggleProfileForm())}
             >
               Update Profile
             </button>
           )}
-          {toggleUpdateProfileForm && (
-            <UpdateProfile setToggleUpdateProfileForm />
-          )}
+          {toggleProfileForm && <UpdateProfile />}
         </div>
       ) : (
         <p>Please Login</p>

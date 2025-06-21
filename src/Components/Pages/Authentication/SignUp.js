@@ -3,63 +3,42 @@ import Card from "../../UI/Card";
 import classes from "./SignUp.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useRef } from "react";
-import firebaseApp from "../../Firebase/initialize";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { handleSignUp } from "../../Store/Slices/AuthSlice";
 
 const SignUp = () => {
-  const nameRef = useRef(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
   const navigate = useNavigate();
-  const signUpHandler = (e) => {
+  const dispatch = useDispatch();
+
+  const signUpHandler = async (e) => {
     e.preventDefault();
-    const signUp_details = {
-      name: nameRef.current.value,
-      email: emailRef.current.value,
-      password: passwordRef.current.value,
-    };
-    console.log(signUp_details);
 
-    const auth = getAuth(firebaseApp);
+    const email = emailRef.current.value;
+    const password = passwordRef.current.value;
 
-    const handleSignUp = async () => {
-      try {
-        await createUserWithEmailAndPassword(
-          auth,
-          signUp_details.email,
-          signUp_details.password
+    if (password === confirmPasswordRef.current.value) {
+      const resultAction = await dispatch(handleSignUp({ email, password }));
+
+      if (handleSignUp.fulfilled.match(resultAction)) {
+        navigate("/welcome");
+      } else {
+        console.error(
+          "Signup failed:",
+          resultAction.payload || resultAction.error.message
         );
-        console.log("User signed up");
-      } catch (err) {
-        console.log(err.message);
       }
-    };
-
-    handleSignUp();
-    navigate("/welcome");
+    } else {
+      alert("password mismatch!");
+    }
   };
 
   return (
     <Card>
       <h2 className="py-3">Sign Up</h2>
       <Form className={classes.form} onSubmit={signUpHandler}>
-        <div className="row m-2 align-items-center">
-          <div className="col-3 text-end">
-            <label htmlFor="name">Name:</label>
-          </div>
-          <div className="col-9">
-            <input
-              id="name"
-              type="text"
-              className="form-control"
-              placeholder="Name"
-              ref={nameRef}
-              autoComplete="name"
-            />
-          </div>
-        </div>
-
         <div className="row m-2 align-items-center">
           <div className="col-3 text-end">
             <label htmlFor="email">E-Mail ID:</label>
@@ -107,6 +86,7 @@ const SignUp = () => {
             />
           </div>
         </div>
+
         <div className="d-flex justify-content-center m-3">
           <button className="btn btn-primary" type="submit">
             Sign Up
