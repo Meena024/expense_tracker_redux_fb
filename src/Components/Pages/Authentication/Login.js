@@ -21,7 +21,6 @@ const Login = () => {
 
     if (handleLogin.fulfilled.match(resultAction)) {
       dispatch(authActions.setUser(resultAction));
-      console.log("login user:", resultAction);
       navigate("/welcome");
     } else {
       console.error(

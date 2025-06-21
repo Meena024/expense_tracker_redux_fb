@@ -38,7 +38,6 @@ export const handleLogin = createAsyncThunk(
         password
       );
       const user = userCredential.user;
-      console.log(user, user.displayName);
       return {
         uid: user.uid,
         email: user.email,
@@ -74,7 +73,7 @@ const AuthSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       state.user = action.payload ? { ...action.payload } : null;
-      console.log("setuser", state.user);
+      console.log("setuser", state.user?.displayName);
     },
   },
   extraReducers: (builder) => {

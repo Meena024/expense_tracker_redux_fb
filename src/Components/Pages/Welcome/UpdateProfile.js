@@ -37,7 +37,6 @@ const UpdateProfile = () => {
       photoURL: user.photoURL,
       uid: user.uid,
     };
-    console.log("updated user:", cur_user, user);
     dispatch(authActions.setUser(cur_user));
     dispatch(setToggleProfileForm());
   };

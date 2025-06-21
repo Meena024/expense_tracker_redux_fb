@@ -1,0 +1,21 @@
+.link {
+  text-decoration: none;
+  background: none;
+  border: none;
+  outline: none;
+  color: white;
+  font-weight: 400;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 3px;
+  /* border: 1px solid white;  */
+}
+
+.navbar {
+  display: flex;
+  padding-left: 100px;
+  padding-right: 100px;
+  justify-content: space-between; /* or space-around, or space-evenly */
+  align-items: center;
+  padding: 5 20px;
+}

@@ -6,6 +6,9 @@ import { useEffect } from "react";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { authActions } from "./Store/Slices/AuthSlice";
+import AddExpense from "./Pages/Expenses/AddExpense";
+import MyExpense from "./Pages/Expenses/MyExpenses";
+import Header from "./Header";
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -31,10 +34,13 @@ const Main = () => {
 
   return (
     <BrowserRouter>
+      <Header />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/welcome" element={<Welcome />} />
+        <Route path="/addExpense" element={<AddExpense />} />
+        <Route path="/myExpense" element={<MyExpense />} />
         <Route
           path="*"
           element={<div className="text-light">Page Not Found.</div>}
