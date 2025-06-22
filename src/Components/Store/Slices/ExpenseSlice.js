@@ -8,12 +8,12 @@ const ExpenseSlice = createSlice({
   name: "Expense",
   initialState,
   reducers: {
-    setExpense: (state, action) => {
-      state.MyExpenses = [action.payload, ...state.MyExpenses];
-      //   console.log("MyExpenses", state.MyExpenses);
+    initializeMyExpense: (state, action) => {
+      state.MyExpenses = action.payload;
+      // console.log(state.MyExpenses);
     },
   },
 });
 
-export const { setExpense } = ExpenseSlice.actions;
+export const { initializeMyExpense } = ExpenseSlice.actions;
 export default ExpenseSlice.reducer;

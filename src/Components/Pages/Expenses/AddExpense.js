@@ -2,15 +2,12 @@ import { Form } from "react-bootstrap";
 import Card from "../../UI/Card";
 import { useRef } from "react";
 import classes from "../Authentication/SignUp.module.css";
-import { setExpense } from "../../Store/Slices/ExpenseSlice";
-import { useDispatch } from "react-redux";
 import { addExpense } from "../../Store/Slices/ExpenseSliceThunk";
 
 const AddExpense = () => {
   const amountRef = useRef();
   const descRef = useRef();
   const categoryRef = useRef();
-  const dispatch = useDispatch();
 
   const addExpenseHandler = async (e) => {
     e.preventDefault();
@@ -20,14 +17,14 @@ const AddExpense = () => {
       description: descRef.current.value,
       category: categoryRef.current.value,
     };
-    console.log(exp);
     try {
-      const expId = await addExpense(exp);
-      dispatch(setExpense({ ...exp, id: expId }));
+      await addExpense(exp);
     } catch (err) {
       alert("Failed to add expense: " + err);
     }
-    // dispatch(setExpense(exp));
+    amountRef.current.value = "";
+    descRef.current.value = "";
+    categoryRef.current.value = "";
   };
 
   return (
