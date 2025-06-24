@@ -1,13 +1,27 @@
 import { Form } from "react-bootstrap";
 import Card from "../../UI/Card";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import classes from "../Authentication/SignUp.module.css";
 import { addExpense } from "../../Store/Slices/ExpenseSliceThunk";
+import { useDispatch, useSelector } from "react-redux";
+import { editExpense } from "../../Store/Slices/ExpenseSliceThunk";
+import { clearExpenseToEdit } from "../../Store/Slices/ExpenseSlice";
 
 const AddExpense = () => {
   const amountRef = useRef();
   const descRef = useRef();
   const categoryRef = useRef();
+  const dispatch = useDispatch();
+
+  const expenseToEdit = useSelector((state) => state.Expense.expenseToEdit);
+
+  useEffect(() => {
+    if (expenseToEdit) {
+      amountRef.current.value = expenseToEdit.amount;
+      descRef.current.value = expenseToEdit.description;
+      categoryRef.current.value = expenseToEdit.category;
+    }
+  }, [expenseToEdit]);
 
   const addExpenseHandler = async (e) => {
     e.preventDefault();
@@ -18,9 +32,15 @@ const AddExpense = () => {
       category: categoryRef.current.value,
     };
     try {
-      await addExpense(exp);
+      if (expenseToEdit) {
+        await dispatch(editExpense(expenseToEdit.id, exp));
+        dispatch(clearExpenseToEdit());
+      } else {
+        const exp_id = await dispatch(addExpense(exp));
+        console.log("Expense added successfully", exp_id);
+      }
     } catch (err) {
-      alert("Failed to add expense: " + err);
+      alert("Failed to add expense: " + err.message);
     }
     amountRef.current.value = "";
     descRef.current.value = "";
