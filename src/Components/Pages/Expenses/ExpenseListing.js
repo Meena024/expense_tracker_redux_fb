@@ -2,7 +2,8 @@ import { deleteExpense } from "../../Store/Slices/ExpenseSliceThunk";
 import { setExpenseToEdit } from "../../Store/Slices/ExpenseSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
-import classes from "../../Styles.module.css";
+import Card from "../../UI/Card";
+import { Col, Row } from "react-bootstrap";
 
 const ExpenseListing = ({ exp }) => {
   console.log(exp, "exp");
@@ -22,14 +23,51 @@ const ExpenseListing = ({ exp }) => {
     navigate("/addExpense");
   };
 
+  const dateObj = new Date(exp.date);
+  const day = dateObj.getDate();
+  const month = dateObj.toLocaleDateString("default", { month: "short" });
+  const year = dateObj.getFullYear();
+
   return (
-    <div className={classes.li}>
-      {console.log(exp)}${exp.amount}- {exp.category} - {exp.description}
-      {"   "}
-      <button onClick={() => editHandler(exp)}>Edit</button>
-      {"   "}
-      <button onClick={() => deleteHandler(exp.id)}>Delete</button>
-    </div>
+    <Card className="mx-5 my-3">
+      {console.log(day, month, year, exp)}
+      <Row className="my-2">
+        <Col className="col-3">
+          <Card className="row m-2 ">
+            <div>
+              <div className="">{day}</div>
+              <div> {month} </div>
+              <div className="fw-bold fs-5">{year}</div>
+            </div>
+          </Card>
+        </Col>
+        <Col className="my-2">
+          <Card className="row mt-2 align-items-center">
+            <div className="col-3 text-start fs-3">${exp.amount}</div>
+            <div className="col-7">
+              <div className="fw-bold fs-5">{exp.category}</div>
+              <div>{exp.description}</div>
+            </div>
+          </Card>
+        </Col>
+        <Col className="col-3 me-4 mt-3">
+          <div class="btn-group" role="group">
+            <button
+              onClick={() => editHandler(exp)}
+              class="btn btn-secondary mt-4"
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => deleteHandler(exp.id)}
+              class="btn btn-secondary mt-4"
+            >
+              Delete
+            </button>
+          </div>
+        </Col>
+      </Row>
+    </Card>
   );
 };
 

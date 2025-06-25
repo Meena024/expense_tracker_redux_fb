@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { initializeMyExpense } from "../../Store/Slices/ExpenseSlice";
 import Card from "../../UI/Card";
 import ExpenseListing from "./ExpenseListing";
+import classes from "../../Styles.module.css";
 
 const MyExpense = () => {
   const dispatch = useDispatch();
@@ -23,9 +24,9 @@ const MyExpense = () => {
   }, [dispatch]);
 
   return (
-    <Card className="m-5">
+    <Card className="m-5 ">
       <h3 className="text-light">My Expenses</h3>
-      <ul className="text-light">
+      <ul className={classes.li}>
         {myExpenses.map((exp) => (
           <ExpenseListing exp={exp} />
         ))}
