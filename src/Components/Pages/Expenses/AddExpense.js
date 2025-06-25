@@ -48,14 +48,14 @@ const AddExpense = () => {
   };
 
   return (
-    <Card className="my-5">
+    <Card className="m-5">
       <h2 className="py-3">Add Expense</h2>
       <Form className={classes.form} onSubmit={addExpenseHandler}>
         <div className="row m-2 align-items-center">
           <div className="col-3 text-end">
             <label htmlFor="amount">Amount:</label>
           </div>
-          <div className="col-9">
+          <div className="col-7">
             <input
               id="amount"
               type="number"
@@ -71,7 +71,7 @@ const AddExpense = () => {
           <div className="col-3 text-end">
             <label htmlFor="description">Description:</label>
           </div>
-          <div className="col-9">
+          <div className="col-7">
             <input
               id="description"
               type="text"
@@ -86,7 +86,7 @@ const AddExpense = () => {
           <div className="col-3 text-end">
             <label htmlFor="category">Category:</label>
           </div>
-          <div className="col-9">
+          <div className="col-7">
             <select id="category" className="form-control" ref={categoryRef}>
               <option value="">Select Category</option>
               <option value="Food">Food</option>

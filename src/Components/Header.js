@@ -5,7 +5,7 @@ import Card from "./UI/Card";
 
 const Header = () => {
   return (
-    <Card className="m-2 p-0">
+    <Card className="m-5 p-0">
       <Navbar className={classes.navbar}>
         <Link className={classes.link} to="/welcome">
           Home

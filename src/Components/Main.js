@@ -10,7 +10,7 @@ import AddExpense from "./Pages/Expenses/AddExpense";
 import MyExpense from "./Pages/Expenses/MyExpenses";
 import Header from "./Header";
 import { handlerLogout } from "./Store/Slices/AuthSlice";
-import Card from "./UI/Card";
+import classes from "./Styles.module.css";
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -42,15 +42,10 @@ const Main = () => {
   };
 
   return (
-    <Card>
+    <div>
       {true && (
-        <div>
-          <button
-            onClick={logoutHandler}
-            className="position-absolute top-0 end-0 m-5"
-          >
-            Logout
-          </button>
+        <div className={classes.button}>
+          <button onClick={logoutHandler}>Logout</button>
           <Header />
         </div>
       )}
@@ -65,7 +60,7 @@ const Main = () => {
           element={<div className="text-light">Page Not Found.</div>}
         />
       </Routes>
-    </Card>
+    </div>
   );
 };
 

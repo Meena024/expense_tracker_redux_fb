@@ -22,7 +22,6 @@ function AuthInitializer() {
             photoURL: user.photoURL,
           })
         );
-        dispatch(authActions.setIsLoggedIn(true));
       } else {
         dispatch(authActions.setUser(null));
         dispatch(authActions.setIsLoggedIn(false));

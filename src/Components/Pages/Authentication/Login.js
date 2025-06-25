@@ -38,7 +38,7 @@ const Login = () => {
           <div className="col-3 text-end">
             <label htmlFor="email">E-Mail ID:</label>
           </div>
-          <div className="col-9">
+          <div className="col-7">
             <input
               id="email"
               type="email"
@@ -54,7 +54,7 @@ const Login = () => {
           <div className="col-3 text-end">
             <label htmlFor="password">Password:</label>
           </div>
-          <div className="col-9">
+          <div className="col-7">
             <input
               id="password"
               type="password"
