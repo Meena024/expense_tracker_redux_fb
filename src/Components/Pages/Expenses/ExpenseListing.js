@@ -6,7 +6,6 @@ import Card from "../../UI/Card";
 import { Col, Row } from "react-bootstrap";
 
 const ExpenseListing = ({ exp }) => {
-  console.log(exp, "exp");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -30,8 +29,7 @@ const ExpenseListing = ({ exp }) => {
 
   return (
     <Card className="mx-5 my-3">
-      {console.log(day, month, year, exp)}
-      <Row className="my-2">
+      <Row>
         <Col className="col-3">
           <Card className="row m-2 ">
             <div>
@@ -43,24 +41,24 @@ const ExpenseListing = ({ exp }) => {
         </Col>
         <Col className="my-2">
           <Card className="row mt-2 align-items-center">
-            <div className="col-3 text-start fs-3">${exp.amount}</div>
+            <div className="col-4 text-start fs-3">${exp.amount}</div>
             <div className="col-7">
               <div className="fw-bold fs-5">{exp.category}</div>
               <div>{exp.description}</div>
             </div>
           </Card>
         </Col>
-        <Col className="col-3 me-4 mt-3">
-          <div class="btn-group" role="group">
+        <Col className="col-3 me-4 mt-3 ms-2">
+          <div className="btn-group" role="group">
             <button
               onClick={() => editHandler(exp)}
-              class="btn btn-secondary mt-4"
+              className="btn btn-secondary mt-4"
             >
               Edit
             </button>
             <button
               onClick={() => deleteHandler(exp.id)}
-              class="btn btn-secondary mt-4"
+              className="btn btn-secondary mt-4"
             >
               Delete
             </button>

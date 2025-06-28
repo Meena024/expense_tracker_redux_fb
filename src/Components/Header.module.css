@@ -11,11 +11,8 @@
   /* border: 1px solid white;  */
 }
 
-.navbar {
+.navLinks {
   display: flex;
-  padding-left: 100px;
-  padding-right: 100px;
-  justify-content: space-between; /* or space-around, or space-evenly */
-  align-items: center;
-  padding: 5 20px;
+  width: 100%;
+  justify-content: space-around; /* or space-evenly */
 }

@@ -24,7 +24,7 @@ function AuthInitializer() {
         );
       } else {
         dispatch(authActions.setUser(null));
-        dispatch(authActions.setIsLoggedIn(false));
+        // dispatch(authActions.setIsLoggedIn(false));
       }
     });
 

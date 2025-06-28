@@ -4,7 +4,10 @@ import { useEffect, useRef } from "react";
 import classes from "../Authentication/SignUp.module.css";
 import { addExpense, editExpense } from "../../Store/Slices/ExpenseSliceThunk";
 import { useDispatch, useSelector } from "react-redux";
-import { clearExpenseToEdit } from "../../Store/Slices/ExpenseSlice";
+import {
+  clearExpenseToEdit,
+  setEditExpense,
+} from "../../Store/Slices/ExpenseSlice";
 
 const AddExpense = () => {
   const dateRef = useRef();
@@ -26,7 +29,6 @@ const AddExpense = () => {
 
   const addExpenseHandler = async (e) => {
     e.preventDefault();
-
     const exp = {
       date: dateRef.current.value,
       amount: amountRef.current.value,
@@ -35,8 +37,10 @@ const AddExpense = () => {
     };
     try {
       if (expenseToEdit) {
-        await dispatch(editExpense(expenseToEdit.id, exp));
-        dispatch(clearExpenseToEdit());
+        const expe = { id: expenseToEdit.id, exp };
+        await dispatch(editExpense(expe));
+        await dispatch(setEditExpense({ ...exp, id: expenseToEdit.id }));
+        await dispatch(clearExpenseToEdit());
       } else {
         const exp_id = await dispatch(addExpense(exp));
         console.log("Expense added successfully", exp_id);

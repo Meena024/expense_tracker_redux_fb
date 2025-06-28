@@ -4,7 +4,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import Welcome from "./Pages/Welcome/Welcome";
 import { useEffect } from "react";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "./Store/Slices/AuthSlice";
 import AddExpense from "./Pages/Expenses/AddExpense";
 import MyExpense from "./Pages/Expenses/MyExpenses";
@@ -15,6 +15,7 @@ import classes from "./Styles.module.css";
 const Main = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useSelector((state) => state.Auth.user);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
@@ -43,7 +44,7 @@ const Main = () => {
 
   return (
     <div>
-      {true && (
+      {user && (
         <div className={classes.button}>
           <button onClick={logoutHandler}>Logout</button>
           <Header />
