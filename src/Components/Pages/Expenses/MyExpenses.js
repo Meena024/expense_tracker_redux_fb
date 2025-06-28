@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Card from "../../UI/Card";
 import ExpenseListing from "./ExpenseListing";
 import classes from "../../Styles.module.css";
+import { setIsPremium } from "../../Store/Slices/ExpenseSlice";
 
 const MyExpense = () => {
   const dispatch = useDispatch();
@@ -19,10 +20,25 @@ const MyExpense = () => {
     0
   );
 
+  useEffect(() => {
+    const isPremReset = async () => {
+      try {
+        if (totalExpense < 100 && isPremium) {
+          await dispatch(setPremium(false));
+          await dispatch(setIsPremium(false));
+        }
+      } catch (err) {
+        console.error("Error resetting premium:", err);
+      }
+    };
+    isPremReset();
+  }, [totalExpense, isPremium, dispatch]);
+
   const premiumHandler = async () => {
     try {
-      await dispatch(setPremium()).unwrap();
+      await dispatch(setPremium(true)).unwrap();
       console.log("Premium activated.");
+      dispatch(setIsPremium(true));
     } catch (err) {
       console.error("Error activating premium:", err);
     }

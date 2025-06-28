@@ -82,13 +82,13 @@ export const editExpense = createAsyncThunk(
 
 export const setPremium = createAsyncThunk(
   "expense/setPremium",
-  async (_, { rejectWithValue }) => {
+  async (val, { rejectWithValue }) => {
     const user_id = localStorage.getItem("uid");
     if (!user_id) return rejectWithValue("User is not authenticated");
 
     try {
-      await set(ref(database, `premium/${user_id}/isPremium`), true);
-      return true;
+      await set(ref(database, `premium/${user_id}/isPremium`), val);
+      return val;
     } catch (err) {
       return rejectWithValue(err.message);
     }
