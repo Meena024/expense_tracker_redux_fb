@@ -10,101 +10,126 @@ import {
 } from "firebase/database";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-const database = getDatabase(firebaseApp);
+// ─────────────────────────────────────────────
+// Firebase Setup
+const db = getDatabase(firebaseApp);
+const getUID = () => localStorage.getItem("uid");
 
+// ─────────────────────────────────────────────
+// Helper: Auth Guard
+const ensureAuth = (rejectWithValue) => {
+  const uid = getUID();
+  if (!uid) return rejectWithValue("User is not authenticated");
+  return uid;
+};
+
+// ─────────────────────────────────────────────
+// ADD EXPENSE
 export const addExpense = createAsyncThunk(
   "expense/addExpense",
   async (exp, { rejectWithValue }) => {
+    const uid = ensureAuth(rejectWithValue);
+    if (!uid) return;
+
     const exp_id = Date.now();
-    const user_id = localStorage.getItem("uid");
+    const expense = { ...exp, id: exp_id, userId: uid };
 
-    if (!user_id) return rejectWithValue("User is not authenticated");
-
-    const expense = { ...exp, id: exp_id, userId: user_id };
     try {
-      await set(ref(database, `expenses/${user_id}/${exp_id}`), expense);
+      await set(ref(db, `expenses/${uid}/${exp_id}`), expense);
       return expense;
     } catch (err) {
+      console.error("🔴 Add expense failed:", err);
       return rejectWithValue(err.message);
     }
   }
 );
 
+// ─────────────────────────────────────────────
+// FETCH EXPENSES
 export const fetchExpense = createAsyncThunk(
   "expense/fetchExpense",
   async (_, { rejectWithValue }) => {
-    const user_id = localStorage.getItem("uid");
-    if (!user_id) return rejectWithValue("User is not authenticated");
+    const uid = ensureAuth(rejectWithValue);
+    if (!uid) return;
 
     try {
-      const snapshot = await get(child(ref(database), `expenses/${user_id}`));
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        return Object.values(data);
-      } else {
-        return [];
-      }
+      const snap = await get(child(ref(db), `expenses/${uid}`));
+      return snap.exists() ? Object.values(snap.val()) : [];
     } catch (err) {
+      console.error("🔴 Fetch expense failed:", err);
       return rejectWithValue(err.message);
     }
   }
 );
 
+// ─────────────────────────────────────────────
+// DELETE EXPENSE
 export const deleteExpense = createAsyncThunk(
   "expense/deleteExpense",
   async (expenseId, { rejectWithValue }) => {
-    const user_id = localStorage.getItem("uid");
-    if (!user_id) return rejectWithValue("User is not authenticated");
+    const uid = ensureAuth(rejectWithValue);
+    if (!uid) return;
 
     try {
-      await remove(ref(database, `expenses/${user_id}/${expenseId}`));
+      await remove(ref(db, `expenses/${uid}/${expenseId}`));
       return expenseId;
     } catch (err) {
+      console.error("🔴 Delete expense failed:", err);
       return rejectWithValue(err.message);
     }
   }
 );
 
+// ─────────────────────────────────────────────
+// EDIT EXPENSE
 export const editExpense = createAsyncThunk(
   "expense/editExpense",
   async ({ id, exp }, { rejectWithValue }) => {
-    const user_id = localStorage.getItem("uid");
-    if (!user_id) return rejectWithValue("User is not authenticated");
+    const uid = ensureAuth(rejectWithValue);
+    if (!uid) return;
 
     try {
-      await update(ref(database, `expenses/${user_id}/${id}`), exp);
+      const updated = { ...exp, id }; // ensure ID stays
+      await update(ref(db, `expenses/${uid}/${id}`), updated);
       return { id, updatedData: exp };
     } catch (err) {
+      console.error("🔴 Edit expense failed:", err);
       return rejectWithValue(err.message);
     }
   }
 );
 
+// ─────────────────────────────────────────────
+// SET PREMIUM
 export const setPremium = createAsyncThunk(
   "expense/setPremium",
   async (val, { rejectWithValue }) => {
-    const user_id = localStorage.getItem("uid");
-    if (!user_id) return rejectWithValue("User is not authenticated");
+    const uid = ensureAuth(rejectWithValue);
+    if (!uid) return;
 
     try {
-      await set(ref(database, `premium/${user_id}/isPremium`), val);
+      await set(ref(db, `premium/${uid}/isPremium`), val);
       return val;
     } catch (err) {
+      console.error("🔴 Set premium failed:", err);
       return rejectWithValue(err.message);
     }
   }
 );
 
+// ─────────────────────────────────────────────
+// FETCH PREMIUM STATUS
 export const fetchPremiumStatus = createAsyncThunk(
   "expense/fetchPremiumStatus",
   async (_, { rejectWithValue }) => {
-    const user_id = localStorage.getItem("uid");
-    if (!user_id) return rejectWithValue("User is not authenticated");
+    const uid = ensureAuth(rejectWithValue);
+    if (!uid) return;
 
     try {
-      const snapshot = await get(ref(database, `premium/${user_id}/isPremium`));
-      return snapshot.exists() ? snapshot.val() : false;
+      const snap = await get(ref(db, `premium/${uid}/isPremium`));
+      return snap.exists() ? snap.val() : false;
     } catch (err) {
+      console.error("🔴 Fetch premium status failed:", err);
       return rejectWithValue(err.message);
     }
   }

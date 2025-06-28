@@ -1,25 +1,23 @@
-import Main from "./Components/Main";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Provider, useDispatch, useSelector } from "react-redux";
-import { store } from "./Components/Store/store";
 import { BrowserRouter } from "react-router-dom";
+import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
+import Main from "./Components/Main";
+import { store } from "./Components/Store/store";
 import { auth } from "./Components/Firebase/initialize";
 import { authActions } from "./Components/Store/Slices/AuthSlice";
-import { useEffect } from "react";
 
 function AuthInitializer() {
   const dispatch = useDispatch();
-  const color = useSelector((state) => state.Expense.color);
-  const premium = useSelector((state) => state.Expense.isPremium);
+  const { color, isPremium } = useSelector((state) => state.Expense);
 
   useEffect(() => {
-    console.log(color);
     document.documentElement.style.setProperty(
       "--accent-color",
-      premium ? color : "#720455"
+      isPremium ? color : "#720455"
     );
-  }, [premium, color]);
+  }, [isPremium, color]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -34,15 +32,13 @@ function AuthInitializer() {
         );
       } else {
         dispatch(authActions.setUser(null));
-        // dispatch(authActions.setIsLoggedIn(false));
       }
     });
 
-    // Cleanup the listener on unmount
-    return () => unsubscribe();
+    return unsubscribe; // Clean up listener
   }, [dispatch]);
 
-  return null; // No UI, just logic
+  return null; // Pure logic, no UI
 }
 
 function App() {

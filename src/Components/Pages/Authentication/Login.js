@@ -1,34 +1,44 @@
+import { useState, useCallback } from "react";
 import { Form } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 import Card from "../../UI/Card";
 import classes from "./SignUp.module.css";
-import { Link, useNavigate } from "react-router-dom";
-import { useRef } from "react";
-import { useDispatch } from "react-redux";
-import { handleLogin, authActions } from "../../Store/Slices/AuthSlice";
+import { handleLogin } from "../../Store/Slices/AuthSlice";
 
 const Login = () => {
-  const mailRef = useRef(null);
-  const passref = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const loginHandler = async (e) => {
-    e.preventDefault();
-    const email = mailRef.current.value;
-    const password = passref.current.value;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-    const resultAction = await dispatch(handleLogin({ email, password }));
+  const loginHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setError(null);
 
-    if (handleLogin.fulfilled.match(resultAction)) {
-      dispatch(authActions.setUser(resultAction));
-      navigate("/welcome");
-    } else {
-      console.error(
-        "Login failed:",
-        resultAction.payload || resultAction.error?.message
-      );
-    }
-  };
+      if (!email.trim() || !password) {
+        setError("Please enter both email and password.");
+        return;
+      }
+
+      setLoading(true);
+      const resultAction = await dispatch(handleLogin({ email, password }));
+      setLoading(false);
+
+      if (handleLogin.fulfilled.match(resultAction)) {
+        navigate("/welcome");
+      } else {
+        setError(resultAction.payload || resultAction.error?.message);
+        console.error("Login failed:", resultAction);
+      }
+    },
+    [dispatch, email, password, navigate]
+  );
 
   return (
     <Card className="my-5">
@@ -44,8 +54,10 @@ const Login = () => {
               type="email"
               className="form-control"
               placeholder="E-Mail id"
-              ref={mailRef}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
+              required
             />
           </div>
         </div>
@@ -60,21 +72,28 @@ const Login = () => {
               type="password"
               className="form-control"
               placeholder="Password"
-              ref={passref}
-              autoComplete="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              required
             />
           </div>
         </div>
 
+        {error && <div className="text-danger text-center mt-2">{error}</div>}
+
         <div className="d-flex justify-content-center m-3">
-          <button className="btn btn-primary" type="submit">
-            Login
+          <button className="btn btn-primary" type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </button>
         </div>
       </Form>
-      <Link className={classes.link} to="/signup">
-        Create a new account? SIGN UP
-      </Link>
+
+      <div className="text-center mt-3">
+        <Link className={classes.link} to="/signup">
+          Create a new account? SIGN UP
+        </Link>
+      </div>
     </Card>
   );
 };

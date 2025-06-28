@@ -1,10 +1,11 @@
-import { useRef } from "react";
+import { useRef, useState, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProfile, getAuth } from "firebase/auth";
+import { Form } from "react-bootstrap";
+
 import Card from "../../UI/Card";
 import classes from "../Authentication/SignUp.module.css";
-import { Form } from "react-bootstrap";
-import { updateProfile, getAuth } from "firebase/auth";
 import { setToggleProfileForm } from "../../Store/Slices/ProfileSlice";
-import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../Store/Slices/AuthSlice";
 
 const UpdateProfile = () => {
@@ -13,33 +14,56 @@ const UpdateProfile = () => {
   const nameRef = useRef(null);
   const imgURLRef = useRef(null);
 
-  const updateProfileHandler = async (e) => {
-    e.preventDefault();
-    const name = nameRef.current.value;
-    const photoURL = imgURLRef.current.value;
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    const updateProfil = async () => {
-      try {
-        await updateProfile(getAuth().currentUser, {
-          displayName: name,
-          photoURL: photoURL,
-        });
-        console.log("Profile updated!");
-      } catch (err) {
-        console.log("Profile update error:", err.message);
+  const updateProfileHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setError(null);
+      setLoading(true);
+
+      const name = nameRef.current?.value.trim();
+      const photoURL = imgURLRef.current?.value.trim();
+
+      if (!name) {
+        setError("Name is required.");
+        setLoading(false);
+        return;
       }
-    };
-    await updateProfil();
-    const user = getAuth().currentUser;
-    const cur_user = {
-      displayName: user.displayName,
-      email: user.email,
-      photoURL: user.photoURL,
-      uid: user.uid,
-    };
-    dispatch(authActions.setUser(cur_user));
-    dispatch(setToggleProfileForm());
-  };
+
+      try {
+        const currentUser = getAuth().currentUser;
+
+        if (!currentUser) throw new Error("No user is currently logged in");
+
+        await updateProfile(currentUser, {
+          displayName: name,
+          photoURL,
+        });
+
+        dispatch(
+          authActions.setUser({
+            displayName: currentUser.displayName,
+            email: currentUser.email,
+            photoURL: currentUser.photoURL,
+            uid: currentUser.uid,
+          })
+        );
+
+        dispatch(setToggleProfileForm());
+      } catch (err) {
+        console.error("Profile update error:", err);
+        setError("Failed to update profile. Try again.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [dispatch]
+  );
+
+  const cancelHandler = () => dispatch(setToggleProfileForm());
+
   return (
     <Card className="my-5">
       <h2 className="py-3">My Profile</h2>
@@ -78,15 +102,13 @@ const UpdateProfile = () => {
           </div>
         </div>
 
+        {error && <div className="text-danger text-center mt-2">{error}</div>}
+
         <div className="d-flex justify-content-center m-3">
-          <button type="submit" className="m-2">
-            Update Profile
+          <button type="submit" className="m-2" disabled={loading}>
+            {loading ? "Updating..." : "Update Profile"}
           </button>
-          <button
-            className="m-2"
-            type="button"
-            onClick={() => dispatch(setToggleProfileForm())}
-          >
+          <button className="m-2" type="button" onClick={cancelHandler}>
             Cancel
           </button>
         </div>

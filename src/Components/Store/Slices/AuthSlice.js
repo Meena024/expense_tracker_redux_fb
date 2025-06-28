@@ -6,62 +6,66 @@ import {
   signOut,
 } from "firebase/auth";
 
+// ─────────────────────────────────────────────
+// Utility: Extract user info
+const formatUser = (user) => ({
+  uid: user.uid,
+  email: user.email,
+  displayName: user.displayName,
+  photoURL: user.photoURL,
+  verifiedUser: user.emailVerified,
+});
+
+// ─────────────────────────────────────────────
+// SIGNUP
 export const handleSignUp = createAsyncThunk(
   "Auth/handleSignUp",
   async ({ email, password }, thunkAPI) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
+      const { user } = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-      const user = userCredential.user;
-      return {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        verifiedUser: user.verifiedUser,
-      };
+      localStorage.setItem("uid", user.uid);
+      return formatUser(user);
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.message);
+      return thunkAPI.rejectWithValue(err.message || "Signup failed");
     }
   }
 );
 
+// ─────────────────────────────────────────────
+// LOGIN
 export const handleLogin = createAsyncThunk(
   "Auth/handleLogin",
   async ({ email, password }, thunkAPI) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-      return {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      };
+      const { user } = await signInWithEmailAndPassword(auth, email, password);
+      localStorage.setItem("uid", user.uid);
+      return formatUser(user);
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.message);
+      return thunkAPI.rejectWithValue(err.message || "Login failed");
     }
   }
 );
 
-export const handlerLogout = createAsyncThunk(
-  "Auth/handlerLogout",
-  async () => {
+// ─────────────────────────────────────────────
+// LOGOUT
+export const handleLogout = createAsyncThunk(
+  "Auth/handleLogout",
+  async (_, thunkAPI) => {
     try {
       await signOut(auth);
+      localStorage.removeItem("uid");
     } catch (err) {
-      console.log(err.message);
+      return thunkAPI.rejectWithValue(err.message || "Logout failed");
     }
   }
 );
 
+// ─────────────────────────────────────────────
+// SLICE
 const initialState = {
   user: null,
   status: "idle",
@@ -73,23 +77,17 @@ const AuthSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      state.user = action.payload ? { ...action.payload } : null;
-      console.log("setuser", state.user?.displayName);
+      state.user = action.payload || null;
     },
   },
   extraReducers: (builder) => {
     builder
+      // Signup
       .addCase(handleSignUp.pending, (state) => {
         state.status = "loading";
-      })
-      .addCase(handleLogin.pending, (state) => {
-        state.status = "loading";
+        state.error = null;
       })
       .addCase(handleSignUp.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.user = action.payload;
-      })
-      .addCase(handleLogin.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.user = action.payload;
       })
@@ -97,7 +95,28 @@ const AuthSlice = createSlice({
         state.status = "failed";
         state.error = action.payload;
       })
+
+      // Login
+      .addCase(handleLogin.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(handleLogin.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.user = action.payload;
+      })
       .addCase(handleLogin.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // Logout
+      .addCase(handleLogout.fulfilled, (state) => {
+        state.user = null;
+        state.status = "idle";
+        state.error = null;
+      })
+      .addCase(handleLogout.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
@@ -105,5 +124,4 @@ const AuthSlice = createSlice({
 });
 
 export const authActions = AuthSlice.actions;
-
 export default AuthSlice.reducer;

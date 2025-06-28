@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   fetchExpense,
   fetchPremiumStatus,
@@ -14,62 +14,37 @@ const MyExpense = () => {
   const dispatch = useDispatch();
   const myExpenses = useSelector((state) => state.Expense.MyExpenses);
   const isPremium = useSelector((state) => state.Expense.isPremium);
-  const color = useSelector((state) => state.Expense.color);
-  const colorRef = useRef();
+  const [color, setColorValue] = useState("#ffffff");
 
-  const handleColorChange = (e) => {
-    dispatch(setColor(e.target.value));
-  };
-  const totalExpense = myExpenses.reduce(
-    (total, exp) => total + Number(exp.amount),
-    0
+  const totalExpense = useMemo(
+    () => myExpenses.reduce((total, exp) => total + Number(exp.amount), 0),
+    [myExpenses]
   );
 
-  useEffect(() => {
-    const isPremReset = async () => {
-      try {
-        if (totalExpense < 100 && isPremium) {
-          await dispatch(setPremium(false));
-          await dispatch(setIsPremium(false));
-        }
-      } catch (err) {
-        console.error("Error resetting premium:", err);
-      }
-    };
-    isPremReset();
-  }, [totalExpense, isPremium, dispatch]);
+  const handleColorChange = (e) => {
+    const selectedColor = e.target.value;
+    setColorValue(selectedColor);
+    dispatch(setColor(selectedColor));
+  };
 
   const premiumHandler = async () => {
     try {
       await dispatch(setPremium(true)).unwrap();
-      console.log("Premium activated.");
       dispatch(setIsPremium(true));
+      console.log("Premium activated.");
     } catch (err) {
       console.error("Error activating premium:", err);
     }
   };
 
-  useEffect(() => {
-    const initialFetch = async () => {
-      try {
-        await dispatch(fetchExpense()).unwrap();
-        await dispatch(fetchPremiumStatus()).unwrap();
-      } catch (err) {
-        console.error("Failed to fetch data:", err);
-      }
-    };
-
-    initialFetch();
-  }, [dispatch]);
-
   const downloadCSV = () => {
     const csvRows = [
       ["Date", "Amount", "Category", "Description"],
-      ...myExpenses.map((expense) => [
-        expense.date,
-        expense.amount,
-        expense.category,
-        expense.description,
+      ...myExpenses.map(({ date, amount, category, description }) => [
+        date,
+        amount,
+        category,
+        description,
       ]),
     ];
 
@@ -84,28 +59,53 @@ const MyExpense = () => {
     document.body.removeChild(a);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await dispatch(fetchExpense()).unwrap();
+        await dispatch(fetchPremiumStatus()).unwrap();
+      } catch (err) {
+        console.error("Failed to fetch data:", err);
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (totalExpense < 100 && isPremium) {
+      dispatch(setPremium(false));
+      dispatch(setIsPremium(false));
+    }
+  }, [totalExpense, isPremium, dispatch]);
+
   return (
-    <Card className="m-5">
+    <Card className="m-5 p-3">
       <div>
-        <label className="mx-5 fs-3">My Expenses</label>
+        <label className="mx-5 my-3 fs-3">My Expenses</label>
+
         {totalExpense > 100 && !isPremium && (
           <button onClick={premiumHandler}>Activate Premium</button>
         )}
-        {isPremium && <button onClick={downloadCSV}>Download CSV</button>}
+
         {isPremium && (
-          <button className="ms-5 pb-2">
-            Change color:
-            <input
-              className="ms-3 mt-1"
-              type="color"
-              value={colorRef}
-              onChange={handleColorChange}
-            />
-          </button>
+          <>
+            <button onClick={downloadCSV}>Download CSV</button>
+            <button className="ms-5 pb-2">
+              Change color:
+              <input
+                className="ms-3 mt-1"
+                type="color"
+                value={color}
+                onChange={handleColorChange}
+              />
+            </button>
+          </>
         )}
       </div>
+
       <ul className={classes.li}>
-        <Card className="mx-5 my-2 fw-bold fs-3">
+        <Card className="mx-2 my-2 fw-bold fs-3">
           Total Expense: ${totalExpense}
         </Card>
         {myExpenses.map((exp) => (

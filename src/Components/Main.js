@@ -1,15 +1,17 @@
+import { useEffect } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { onAuthStateChanged, getAuth } from "firebase/auth";
+import { authActions, handleLogout } from "./Store/Slices/AuthSlice";
+import { setColor } from "./Store/Slices/ExpenseSlice";
+
 import SignUp from "./Pages/Authentication/SignUp";
 import Login from "./Pages/Authentication/Login";
-import { Route, Routes, useNavigate } from "react-router-dom";
 import Welcome from "./Pages/Welcome/Welcome";
-import { useEffect } from "react";
-import { onAuthStateChanged, getAuth } from "firebase/auth";
-import { useDispatch, useSelector } from "react-redux";
-import { authActions } from "./Store/Slices/AuthSlice";
 import AddExpense from "./Pages/Expenses/AddExpense";
 import MyExpense from "./Pages/Expenses/MyExpenses";
 import Header from "./Header";
-import { handlerLogout } from "./Store/Slices/AuthSlice";
+
 import classes from "./Styles.module.css";
 
 const Main = () => {
@@ -18,18 +20,18 @@ const Main = () => {
   const user = useSelector((state) => state.Auth.user);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
-      if (user) {
+    const unsubscribe = onAuthStateChanged(getAuth(), (firebaseUser) => {
+      if (firebaseUser) {
         dispatch(
           authActions.setUser({
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            displayName: firebaseUser.displayName,
+            photoURL: firebaseUser.photoURL,
           })
         );
       } else {
-        dispatch(authActions.setUser({ payload: null }));
+        dispatch(authActions.setUser(null));
       }
     });
 
@@ -37,9 +39,15 @@ const Main = () => {
   }, [dispatch]);
 
   const logoutHandler = async () => {
-    await dispatch(handlerLogout());
-    await dispatch(authActions.setUser(null));
-    navigate("/login");
+    try {
+      await dispatch(handleLogout());
+      dispatch(authActions.setUser(null));
+      localStorage.removeItem("uid");
+      dispatch(setColor("#720455"));
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
   };
 
   return (
@@ -50,6 +58,7 @@ const Main = () => {
           <Header />
         </div>
       )}
+
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
@@ -65,5 +74,4 @@ const Main = () => {
   );
 };
 
-// Wrap Main in BrowserRouter at the top level, like in index.js
 export default Main;

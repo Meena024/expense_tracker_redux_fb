@@ -2,22 +2,22 @@ import { deleteExpense } from "../../Store/Slices/ExpenseSliceThunk";
 import { setExpenseToEdit } from "../../Store/Slices/ExpenseSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
-import Card from "../../UI/Card";
 import { Col, Row } from "react-bootstrap";
+import "./ExpenseListing.css";
 
 const ExpenseListing = ({ exp }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const deleteHandler = async (exp_id) => {
+  const handleDelete = async () => {
     try {
-      await dispatch(deleteExpense(exp_id));
+      await dispatch(deleteExpense(exp.id));
     } catch (err) {
-      console.error("Failed to delete expense:", err);
+      console.error("Failed to delete expense:", err.message);
     }
   };
 
-  const editHandler = (exp) => {
+  const handleEdit = () => {
     dispatch(setExpenseToEdit(exp));
     navigate("/addExpense");
   };
@@ -28,44 +28,41 @@ const ExpenseListing = ({ exp }) => {
   const year = dateObj.getFullYear();
 
   return (
-    <Card className="mx-5 my-3">
-      <Row className="d-flex flex-wrap align-items-center mx-2 my-3">
-        <Col className="col-3">
-          <Card className="row m-2 ">
-            <div>
-              <div className="">{day}</div>
-              <div> {month} </div>
-              <div className="fw-bold fs-5">{year}</div>
-            </div>
-          </Card>
-        </Col>
-        <Col className="m-2">
-          <Card className="row mt-2 align-items-center">
-            <div className="col-4 text-start fs-3">${exp.amount}</div>
+    <Row className="expense-item align-items-center p-3 m-2">
+      {/* 1st Column - Date */}
+      <Col md={3}>
+        <div className="date-box text-center p-3">
+          <div className="fs-4">{day}</div>
+          <div>{month}</div>
+          <div className="fw-bold fs-5">{year}</div>
+        </div>
+      </Col>
+
+      {/* 2nd Column - Expense Info */}
+      <Col md={6} className="d-flex justify-content-center ">
+        <div className="expense-info p-3">
+          <div className="row">
+            <div className="col-5 fs-3">${exp.amount}</div>
             <div className="col-7">
               <div className="fw-bold fs-5">{exp.category}</div>
               <div>{exp.description}</div>
             </div>
-          </Card>
-        </Col>
-        <Col className="col-3 m-2">
-          <div className="btn-group" role="group">
-            <button
-              onClick={() => editHandler(exp)}
-              className="btn btn-secondary mt-4"
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => deleteHandler(exp.id)}
-              className="btn btn-secondary mt-4"
-            >
-              Delete
-            </button>
           </div>
-        </Col>
-      </Row>
-    </Card>
+        </div>
+      </Col>
+
+      {/* 3rd Column - Buttons */}
+      <Col md={3} className="d-flex justify-content-center ">
+        <div className="button-group">
+          <button onClick={handleEdit} className="btn btn-secondary">
+            Edit
+          </button>
+          <button onClick={handleDelete} className="btn btn-secondary">
+            Delete
+          </button>
+        </div>
+      </Col>
+    </Row>
   );
 };
 

@@ -1,74 +1,80 @@
+import { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import Card from "../../UI/Card";
-import { useEffect, useRef } from "react";
 import classes from "../Authentication/SignUp.module.css";
-import { addExpense, editExpense } from "../../Store/Slices/ExpenseSliceThunk";
 import { useDispatch, useSelector } from "react-redux";
+import { addExpense, editExpense } from "../../Store/Slices/ExpenseSliceThunk";
 import {
   clearExpenseToEdit,
   setEditExpense,
 } from "../../Store/Slices/ExpenseSlice";
 
 const AddExpense = () => {
-  const dateRef = useRef();
-  const amountRef = useRef();
-  const descRef = useRef();
-  const categoryRef = useRef();
   const dispatch = useDispatch();
-
   const expenseToEdit = useSelector((state) => state.Expense.expenseToEdit);
+
+  const [date, setDate] = useState("");
+  const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
 
   useEffect(() => {
     if (expenseToEdit) {
-      dateRef.current.value = expenseToEdit.date;
-      amountRef.current.value = expenseToEdit.amount;
-      descRef.current.value = expenseToEdit.description;
-      categoryRef.current.value = expenseToEdit.category;
+      setDate(expenseToEdit.date || "");
+      setAmount(expenseToEdit.amount || "");
+      setDescription(expenseToEdit.description || "");
+      setCategory(expenseToEdit.category || "");
     }
   }, [expenseToEdit]);
 
-  const addExpenseHandler = async (e) => {
+  const resetForm = () => {
+    setDate("");
+    setAmount("");
+    setDescription("");
+    setCategory("");
+  };
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    const exp = {
-      date: dateRef.current.value,
-      amount: amountRef.current.value,
-      description: descRef.current.value,
-      category: categoryRef.current.value,
+    const expense = {
+      date,
+      amount,
+      description,
+      category,
     };
+
     try {
       if (expenseToEdit) {
-        const expe = { id: expenseToEdit.id, exp };
-        await dispatch(editExpense(expe));
-        await dispatch(setEditExpense({ ...exp, id: expenseToEdit.id }));
-        await dispatch(clearExpenseToEdit());
+        await dispatch(editExpense({ id: expenseToEdit.id, exp: expense }));
+        dispatch(setEditExpense({ ...expense, id: expenseToEdit.id }));
+        dispatch(clearExpenseToEdit());
       } else {
-        const exp_id = await dispatch(addExpense(exp));
-        console.log("Expense added successfully", exp_id);
+        await dispatch(addExpense(expense));
+        console.log("Expense added successfully");
       }
     } catch (err) {
-      alert("Failed to add expense: " + err.message);
+      alert("Failed to submit expense: " + err.message);
     }
-    dateRef.current.value = "";
-    amountRef.current.value = "";
-    descRef.current.value = "";
-    categoryRef.current.value = "";
+
+    resetForm();
   };
 
   return (
     <Card className="m-5">
-      <h2 className="py-3">Add Expense</h2>
-      <Form className={classes.form} onSubmit={addExpenseHandler}>
+      <h2 className="py-3">{expenseToEdit ? "Edit Expense" : "Add Expense"}</h2>
+      <Form className={classes.form} onSubmit={submitHandler}>
         <div className="row m-2 align-items-center">
           <div className="col-3 text-end">
-            <label htmlFor="amount">Date:</label>
+            <label htmlFor="date">Date:</label>
           </div>
           <div className="col-7">
             <input
               id="date"
               type="date"
               className="form-control"
-              ref={dateRef}
-              autoComplete="transaction-amount"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
             />
           </div>
         </div>
@@ -83,8 +89,9 @@ const AddExpense = () => {
               type="number"
               className="form-control"
               placeholder="Amount"
-              ref={amountRef}
-              autoComplete="transaction-amount"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              required
             />
           </div>
         </div>
@@ -99,7 +106,9 @@ const AddExpense = () => {
               type="text"
               className="form-control"
               placeholder="Description"
-              ref={descRef}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
             />
           </div>
         </div>
@@ -109,7 +118,13 @@ const AddExpense = () => {
             <label htmlFor="category">Category:</label>
           </div>
           <div className="col-7">
-            <select id="category" className="form-control" ref={categoryRef}>
+            <select
+              id="category"
+              className="form-control"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              required
+            >
               <option value="">Select Category</option>
               <option value="Food">Food</option>
               <option value="Transport">Transport</option>
@@ -122,7 +137,7 @@ const AddExpense = () => {
 
         <div className="d-flex justify-content-center m-3">
           <button className="btn btn-primary" type="submit">
-            Add Expense
+            {expenseToEdit ? "Update Expense" : "Add Expense"}
           </button>
         </div>
       </Form>

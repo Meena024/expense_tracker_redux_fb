@@ -1,13 +1,12 @@
 import { Navbar } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import classes from "./Header.module.css";
-import { Link } from "react-router";
-import Card from "./UI/Card";
 
 const Header = () => {
   return (
-    <Card className="m-5 p-0">
-      <Navbar className="m-2">
-        <div className={classes.navLinks}>
+    <div className={classes.header}>
+      <Navbar>
+        <nav className={classes.navLinks}>
           <Link className={classes.link} to="/welcome">
             Home
           </Link>
@@ -17,9 +16,9 @@ const Header = () => {
           <Link className={classes.link} to="/myExpense">
             My Expense
           </Link>
-        </div>
+        </nav>
       </Navbar>
-    </Card>
+    </div>
   );
 };
 

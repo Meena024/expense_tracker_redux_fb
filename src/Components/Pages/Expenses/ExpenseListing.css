@@ -1,0 +1,33 @@
+:root {
+  --accent-color: #720455;
+}
+
+.expense-item {
+  background: linear-gradient(225deg, #0000, var(--accent-color));
+  border: 1px solid white;
+  border-radius: 15px;
+  color: white;
+}
+
+.date-box {
+  background: linear-gradient(225deg, #0000);
+  border: 1px solid white;
+  border-radius: 10px;
+  width: 100%;
+}
+
+.expense-info {
+  background: linear-gradient(225deg, #0000, #0000, var(--accent-color));
+  border: 1px solid white;
+  border-radius: 10px;
+  width: 100%;
+}
+
+.button-group button {
+  min-width: 100px;
+  border: 1px solid white;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  margin: 3%;
+}

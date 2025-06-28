@@ -1,39 +1,52 @@
+import { useState, useCallback } from "react";
 import { Form } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 import Card from "../../UI/Card";
 import classes from "./SignUp.module.css";
-import { Link, useNavigate } from "react-router-dom";
-import { useRef } from "react";
-import { useDispatch } from "react-redux";
 import { handleSignUp } from "../../Store/Slices/AuthSlice";
 
 const SignUp = () => {
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
-  const confirmPasswordRef = useRef(null);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const signUpHandler = async (e) => {
-    e.preventDefault();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-    const email = emailRef.current.value;
-    const password = passwordRef.current.value;
+  const signUpHandler = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setError(null);
 
-    if (password === confirmPasswordRef.current.value) {
-      const resultAction = await dispatch(handleSignUp({ email, password }));
+      if (!email.trim() || !password || !confirmPassword) {
+        setError("All fields are required.");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setError("Passwords do not match.");
+        return;
+      }
+
+      setLoading(true);
+      const resultAction = await dispatch(
+        handleSignUp({ email: email.trim(), password })
+      );
+      setLoading(false);
 
       if (handleSignUp.fulfilled.match(resultAction)) {
         navigate("/welcome");
       } else {
-        console.error(
-          "Signup failed:",
-          resultAction.payload || resultAction.error.message
-        );
+        setError(resultAction.payload || resultAction.error.message);
+        console.error("Signup failed:", resultAction);
       }
-    } else {
-      alert("password mismatch!");
-    }
-  };
+    },
+    [dispatch, email, password, confirmPassword, navigate]
+  );
 
   return (
     <Card>
@@ -45,12 +58,14 @@ const SignUp = () => {
           </div>
           <div className="col-7">
             <input
-              id="email_id"
+              id="email"
               type="email"
               className="form-control"
-              placeholder="E-Mail id"
-              ref={emailRef}
+              placeholder="E-Mail ID"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
+              required
             />
           </div>
         </div>
@@ -61,12 +76,14 @@ const SignUp = () => {
           </div>
           <div className="col-7">
             <input
-              id="pasword"
+              id="password"
               type="password"
               className="form-control"
               placeholder="Password"
-              ref={passwordRef}
-              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+              required
             />
           </div>
         </div>
@@ -81,21 +98,28 @@ const SignUp = () => {
               type="password"
               className="form-control"
               placeholder="Confirm Password"
-              ref={confirmPasswordRef}
-              autoComplete="current-password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              autoComplete="new-password"
+              required
             />
           </div>
         </div>
 
+        {error && <div className="text-danger text-center mt-2">{error}</div>}
+
         <div className="d-flex justify-content-center m-3">
-          <button className="btn btn-primary" type="submit">
-            Sign Up
+          <button className="btn btn-primary" type="submit" disabled={loading}>
+            {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </div>
       </Form>
-      <Link className={classes.link} to="/login">
-        Already having an account? LOGIN
-      </Link>
+
+      <div className="text-center mb-3">
+        <Link className={classes.link} to="/login">
+          Already have an account? LOGIN
+        </Link>
+      </div>
     </Card>
   );
 };
