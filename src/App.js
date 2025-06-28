@@ -1,6 +1,6 @@
 import Main from "./Components/Main";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Provider, useDispatch } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { store } from "./Components/Store/store";
 import { BrowserRouter } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
@@ -10,6 +10,16 @@ import { useEffect } from "react";
 
 function AuthInitializer() {
   const dispatch = useDispatch();
+  const color = useSelector((state) => state.Expense.color);
+  const premium = useSelector((state) => state.Expense.isPremium);
+
+  useEffect(() => {
+    console.log(color);
+    document.documentElement.style.setProperty(
+      "--accent-color",
+      premium ? color : "#720455"
+    );
+  }, [premium, color]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {

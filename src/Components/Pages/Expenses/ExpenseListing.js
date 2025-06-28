@@ -29,7 +29,7 @@ const ExpenseListing = ({ exp }) => {
 
   return (
     <Card className="mx-5 my-3">
-      <Row>
+      <Row className="d-flex flex-wrap align-items-center mx-2 my-3">
         <Col className="col-3">
           <Card className="row m-2 ">
             <div>
@@ -39,7 +39,7 @@ const ExpenseListing = ({ exp }) => {
             </div>
           </Card>
         </Col>
-        <Col className="my-2">
+        <Col className="m-2">
           <Card className="row mt-2 align-items-center">
             <div className="col-4 text-start fs-3">${exp.amount}</div>
             <div className="col-7">
@@ -48,7 +48,7 @@ const ExpenseListing = ({ exp }) => {
             </div>
           </Card>
         </Col>
-        <Col className="col-3 me-4 mt-3 ms-2">
+        <Col className="col-3 m-2">
           <div className="btn-group" role="group">
             <button
               onClick={() => editHandler(exp)}

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   fetchExpense,
   fetchPremiumStatus,
@@ -8,13 +8,18 @@ import { useDispatch, useSelector } from "react-redux";
 import Card from "../../UI/Card";
 import ExpenseListing from "./ExpenseListing";
 import classes from "../../Styles.module.css";
-import { setIsPremium } from "../../Store/Slices/ExpenseSlice";
+import { setColor, setIsPremium } from "../../Store/Slices/ExpenseSlice";
 
 const MyExpense = () => {
   const dispatch = useDispatch();
   const myExpenses = useSelector((state) => state.Expense.MyExpenses);
   const isPremium = useSelector((state) => state.Expense.isPremium);
+  const color = useSelector((state) => state.Expense.color);
+  const colorRef = useRef();
 
+  const handleColorChange = (e) => {
+    dispatch(setColor(e.target.value));
+  };
   const totalExpense = myExpenses.reduce(
     (total, exp) => total + Number(exp.amount),
     0
@@ -82,11 +87,22 @@ const MyExpense = () => {
   return (
     <Card className="m-5">
       <div>
-        <label className="mx-5">My Expenses</label>
+        <label className="mx-5 fs-3">My Expenses</label>
         {totalExpense > 100 && !isPremium && (
           <button onClick={premiumHandler}>Activate Premium</button>
         )}
         {isPremium && <button onClick={downloadCSV}>Download CSV</button>}
+        {isPremium && (
+          <button className="ms-5 pb-2">
+            Change color:
+            <input
+              className="ms-3 mt-1"
+              type="color"
+              value={colorRef}
+              onChange={handleColorChange}
+            />
+          </button>
+        )}
       </div>
       <ul className={classes.li}>
         <Card className="mx-5 my-2 fw-bold fs-3">

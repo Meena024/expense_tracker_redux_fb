@@ -12,6 +12,7 @@ const initialState = {
   MyExpenses: [],
   expenseToEdit: null,
   isPremium: false,
+  color: "#4a0908", //"#410230",
 };
 
 const ExpenseSlice = createSlice({
@@ -45,6 +46,9 @@ const ExpenseSlice = createSlice({
     },
     setIsPremium: (state, action) => {
       state.isPremium = action.payload;
+    },
+    setColor: (state, action) => {
+      state.color = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -102,5 +106,6 @@ export const {
   setDeleteExpense,
   setEditExpense,
   setIsPremium,
+  setColor,
 } = ExpenseSlice.actions;
 export default ExpenseSlice.reducer;
