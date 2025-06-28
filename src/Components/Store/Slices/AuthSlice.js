@@ -21,6 +21,7 @@ export const handleSignUp = createAsyncThunk(
         email: user.email,
         displayName: user.displayName,
         photoURL: user.photoURL,
+        verifiedUser: user.verifiedUser,
       };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
