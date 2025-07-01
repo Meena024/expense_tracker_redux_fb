@@ -13,6 +13,7 @@ import MyExpense from "./Pages/Expenses/MyExpenses";
 import Header from "./Header";
 
 import classes from "./Styles.module.css";
+import AutoLogoutWrapper from "./Pages/AutoLogOut/AutoLogOutWrapper";
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -59,17 +60,19 @@ const Main = () => {
         </div>
       )}
 
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/welcome" element={<Welcome />} />
-        <Route path="/addExpense" element={<AddExpense />} />
-        <Route path="/myExpense" element={<MyExpense />} />
-        <Route
-          path="*"
-          element={<div className="text-light">Page Not Found.</div>}
-        />
-      </Routes>
+      <AutoLogoutWrapper>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/welcome" element={<Welcome />} />
+          <Route path="/addExpense" element={<AddExpense />} />
+          <Route path="/myExpense" element={<MyExpense />} />
+          <Route
+            path="*"
+            element={<div className="text-light">Page Not Found.</div>}
+          />
+        </Routes>
+      </AutoLogoutWrapper>
     </div>
   );
 };
