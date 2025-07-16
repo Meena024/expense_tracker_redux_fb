@@ -25,3 +25,9 @@
   width: 100%;
   justify-content: space-around; /* or space-evenly */
 }
+
+.active {
+  font-weight: 700;
+  font-size: 20px;
+  /* border: white 1px solid; */
+}

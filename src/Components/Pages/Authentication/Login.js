@@ -5,7 +5,10 @@ import { useDispatch } from "react-redux";
 
 import Card from "../../UI/Card";
 import classes from "./SignUp.module.css";
-import { handleLogin } from "../../Store/Slices/AuthSlice";
+import {
+  handleLogin,
+  handleForgotPassword,
+} from "../../Store/Slices/AuthSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -40,10 +43,32 @@ const Login = () => {
     [dispatch, email, password, navigate]
   );
 
+  const forgotPasswordHandler = async () => {
+    setError(null);
+
+    if (!email.trim()) {
+      setError("Please enter your email address.");
+      return;
+    }
+
+    try {
+      const resultAction = await dispatch(handleForgotPassword(email));
+
+      if (handleForgotPassword.fulfilled.match(resultAction)) {
+        alert("Password reset email sent! Please check your inbox.");
+      } else {
+        setError(resultAction.payload || resultAction.error?.message);
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+      console.error("Forgot password error:", err);
+    }
+  };
+
   return (
     <Card className="my-5">
       <h2 className="py-3">Login</h2>
-      <Form className={classes.form} onSubmit={loginHandler}>
+      <Form onSubmit={loginHandler}>
         <div className="row m-2 align-items-center">
           <div className="col-3 text-end">
             <label htmlFor="email">E-Mail ID:</label>
@@ -90,6 +115,9 @@ const Login = () => {
       </Form>
 
       <div className="text-center mt-3">
+        <Link className={classes.link} onClick={() => forgotPasswordHandler()}>
+          Forgot Password
+        </Link>
         <Link className={classes.link} to="/signup">
           Create a new account? SIGN UP
         </Link>

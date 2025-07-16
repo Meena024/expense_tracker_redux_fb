@@ -1,18 +1,10 @@
-import firebaseApp from "../../Firebase/initialize";
-import {
-  getDatabase,
-  ref,
-  set,
-  child,
-  get,
-  remove,
-  update,
-} from "firebase/database";
+// import firebaseApp from "../../Firebase/initialize";
+import { db } from "../../Firebase/initialize";
+import { ref, set, child, get, remove, update } from "firebase/database";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 // ─────────────────────────────────────────────
 // Firebase Setup
-const db = getDatabase(firebaseApp);
 const getUID = () => localStorage.getItem("uid");
 
 // ─────────────────────────────────────────────

@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { auth } from "../../Firebase/initialize";
 import {
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
@@ -51,6 +52,22 @@ export const handleLogin = createAsyncThunk(
 );
 
 // ─────────────────────────────────────────────
+// FORGOT PASSWORD
+export const handleForgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
+  async (email, thunkAPI) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return "Password reset email sent successfully.";
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.message || "Failed to send reset email."
+      );
+    }
+  }
+);
+
+// ─────────────────────────────────────────────
 // LOGOUT
 export const handleLogout = createAsyncThunk(
   "Auth/handleLogout",
@@ -58,6 +75,12 @@ export const handleLogout = createAsyncThunk(
     try {
       await signOut(auth);
       localStorage.removeItem("uid");
+      localStorage.removeItem("expenses");
+      localStorage.removeItem("isPremium");
+      localStorage.removeItem("themeColor");
+      localStorage.removeItem(
+        "firebase:host:expensetracker-a08e8-default-rtdb.firebaseio.com"
+      );
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message || "Logout failed");
     }
