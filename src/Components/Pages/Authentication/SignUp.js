@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 
 import Card from "../../UI/Card";
 import classes from "./SignUp.module.css";
-import { handleSignUp } from "../../Store/Slices/AuthSlice";
+import { handleSignUp } from "../../Store/Slices/AuthSliceThunk";
 
 const SignUp = () => {
   const dispatch = useDispatch();

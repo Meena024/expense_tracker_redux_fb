@@ -1,6 +1,6 @@
 import { useState } from "react";
 import useAutoLogout from "./useAutoLogOut";
-import { handleLogout } from "../../Store/Slices/AuthSlice";
+import { handleLogout } from "../../Store/Slices/AuthSliceThunk";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { useDispatch, useSelector } from "react-redux";

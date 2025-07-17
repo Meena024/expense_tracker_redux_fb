@@ -8,7 +8,7 @@ import classes from "./SignUp.module.css";
 import {
   handleLogin,
   handleForgotPassword,
-} from "../../Store/Slices/AuthSlice";
+} from "../../Store/Slices/AuthSliceThunk";
 
 const Login = () => {
   const dispatch = useDispatch();

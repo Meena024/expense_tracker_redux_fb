@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import { authActions, handleLogout } from "./Store/Slices/AuthSlice";
+import { handleLogout } from "./Store/Slices/AuthSliceThunk";
+import { authActions } from "./Store/Slices/AuthSlice";
 import { setColor } from "./Store/Slices/ExpenseSlice";
 
 import SignUp from "./Pages/Authentication/SignUp";
