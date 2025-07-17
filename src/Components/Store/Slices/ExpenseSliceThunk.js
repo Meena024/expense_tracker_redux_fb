@@ -1,22 +1,15 @@
-// import firebaseApp from "../../Firebase/initialize";
 import { db } from "../../Firebase/initialize";
 import { ref, set, child, get, remove, update } from "firebase/database";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-// ─────────────────────────────────────────────
-// Firebase Setup
 const getUID = () => localStorage.getItem("uid");
 
-// ─────────────────────────────────────────────
-// Helper: Auth Guard
 const ensureAuth = (rejectWithValue) => {
   const uid = getUID();
   if (!uid) return rejectWithValue("User is not authenticated");
   return uid;
 };
 
-// ─────────────────────────────────────────────
-// ADD EXPENSE
 export const addExpense = createAsyncThunk(
   "expense/addExpense",
   async (exp, { rejectWithValue }) => {
@@ -30,14 +23,12 @@ export const addExpense = createAsyncThunk(
       await set(ref(db, `expenses/${uid}/${exp_id}`), expense);
       return expense;
     } catch (err) {
-      console.error("🔴 Add expense failed:", err);
+      console.error("Add expense failed:", err);
       return rejectWithValue(err.message);
     }
   }
 );
 
-// ─────────────────────────────────────────────
-// FETCH EXPENSES
 export const fetchExpense = createAsyncThunk(
   "expense/fetchExpense",
   async (_, { rejectWithValue }) => {
@@ -48,14 +39,12 @@ export const fetchExpense = createAsyncThunk(
       const snap = await get(child(ref(db), `expenses/${uid}`));
       return snap.exists() ? Object.values(snap.val()) : [];
     } catch (err) {
-      console.error("🔴 Fetch expense failed:", err);
+      console.error("Fetch expense failed:", err);
       return rejectWithValue(err.message);
     }
   }
 );
 
-// ─────────────────────────────────────────────
-// DELETE EXPENSE
 export const deleteExpense = createAsyncThunk(
   "expense/deleteExpense",
   async (expenseId, { rejectWithValue }) => {
@@ -66,14 +55,12 @@ export const deleteExpense = createAsyncThunk(
       await remove(ref(db, `expenses/${uid}/${expenseId}`));
       return expenseId;
     } catch (err) {
-      console.error("🔴 Delete expense failed:", err);
+      console.error("Delete expense failed:", err);
       return rejectWithValue(err.message);
     }
   }
 );
 
-// ─────────────────────────────────────────────
-// EDIT EXPENSE
 export const editExpense = createAsyncThunk(
   "expense/editExpense",
   async ({ id, exp }, { rejectWithValue }) => {
@@ -81,18 +68,16 @@ export const editExpense = createAsyncThunk(
     if (!uid) return;
 
     try {
-      const updated = { ...exp, id }; // ensure ID stays
+      const updated = { ...exp, id };
       await update(ref(db, `expenses/${uid}/${id}`), updated);
       return { id, updatedData: exp };
     } catch (err) {
-      console.error("🔴 Edit expense failed:", err);
+      console.error("Edit expense failed:", err);
       return rejectWithValue(err.message);
     }
   }
 );
 
-// ─────────────────────────────────────────────
-// SET PREMIUM
 export const setPremium = createAsyncThunk(
   "expense/setPremium",
   async (val, { rejectWithValue }) => {
@@ -103,14 +88,12 @@ export const setPremium = createAsyncThunk(
       await set(ref(db, `premium/${uid}/isPremium`), val);
       return val;
     } catch (err) {
-      console.error("🔴 Set premium failed:", err);
+      console.error("Set premium failed:", err);
       return rejectWithValue(err.message);
     }
   }
 );
 
-// ─────────────────────────────────────────────
-// FETCH PREMIUM STATUS
 export const fetchPremiumStatus = createAsyncThunk(
   "expense/fetchPremiumStatus",
   async (_, { rejectWithValue }) => {
@@ -121,7 +104,7 @@ export const fetchPremiumStatus = createAsyncThunk(
       const snap = await get(ref(db, `premium/${uid}/isPremium`));
       return snap.exists() ? snap.val() : false;
     } catch (err) {
-      console.error("🔴 Fetch premium status failed:", err);
+      console.error("Fetch premium status failed:", err);
       return rejectWithValue(err.message);
     }
   }

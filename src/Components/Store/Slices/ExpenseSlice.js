@@ -8,8 +8,6 @@ import {
   deleteExpense,
 } from "./ExpenseSliceThunk";
 
-// ─────────────────────────────────────────────
-// INITIAL STATE
 const initialState = {
   MyExpenses: JSON.parse(localStorage.getItem("expenses")) || [],
   expenseToEdit: null,
@@ -17,13 +15,10 @@ const initialState = {
   color: localStorage.getItem("themeColor") || "rgb(78,70,70)",
 };
 
-// ─────────────────────────────────────────────
-// SLICE
 const ExpenseSlice = createSlice({
   name: "Expense",
   initialState,
   reducers: {
-    // Initialize Redux from localStorage or backup
     initializeMyExpense: (state, action) => {
       state.MyExpenses = action.payload || [];
       localStorage.setItem("expenses", JSON.stringify(state.MyExpenses));
@@ -33,7 +28,6 @@ const ExpenseSlice = createSlice({
       localStorage.setItem("isPremium", JSON.stringify(action.payload));
     },
 
-    // Local-only setters for offline/optimistic updates
     setAddedExpense: (state, action) => {
       state.MyExpenses = [action.payload, ...state.MyExpenses];
       localStorage.setItem("expenses", JSON.stringify(state.MyExpenses));
@@ -51,7 +45,6 @@ const ExpenseSlice = createSlice({
       localStorage.setItem("expenses", JSON.stringify(state.MyExpenses));
     },
 
-    // Expense editor modal/panel state
     setExpenseToEdit: (state, action) => {
       state.expenseToEdit = action.payload;
     },
@@ -59,24 +52,19 @@ const ExpenseSlice = createSlice({
       state.expenseToEdit = null;
     },
 
-    // Premium toggle from UI
     setIsPremium: (state, action) => {
       state.isPremium = action.payload;
       localStorage.setItem("isPremium", JSON.stringify(action.payload));
     },
 
-    // UI Theme color
     setColor: (state, action) => {
       state.color = action.payload;
       localStorage.setItem("themeColor", action.payload);
     },
   },
 
-  // ─────────────────────────────────────────────
-  // Async Thunk Handlers (Backend Sync)
   extraReducers: (builder) => {
     builder
-      // ─── EXPENSE CRUD ───────────────────────
       .addCase(addExpense.fulfilled, (state, action) => {
         state.MyExpenses = [action.payload, ...state.MyExpenses];
         localStorage.setItem("expenses", JSON.stringify(state.MyExpenses));
@@ -99,7 +87,6 @@ const ExpenseSlice = createSlice({
         localStorage.setItem("expenses", JSON.stringify(state.MyExpenses));
       })
 
-      // ─── PREMIUM STATUS ─────────────────────
       .addCase(setPremium.fulfilled, (state) => {
         state.isPremium = true;
         localStorage.setItem("isPremium", "true");
@@ -109,7 +96,6 @@ const ExpenseSlice = createSlice({
         localStorage.setItem("isPremium", JSON.stringify(action.payload));
       })
 
-      // ─── ERROR LOGGING (OPTIONAL) ───────────
       .addCase(addExpense.rejected, (_, action) => {
         console.error("Add failed:", action.payload);
       })
@@ -125,8 +111,6 @@ const ExpenseSlice = createSlice({
   },
 });
 
-// ─────────────────────────────────────────────
-// EXPORTS
 export const {
   initializeMyExpense,
   initializeIsPremium,

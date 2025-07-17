@@ -8,8 +8,6 @@ const initialState = {
   error: null,
 };
 
-// ─────────────────────────────────────────────
-// UPDATE PROFILE THUNK
 export const handleUpdateProfile = createAsyncThunk(
   "profile/handleUpdateProfile",
   async ({ name, photoURL }, { rejectWithValue }) => {
@@ -36,8 +34,6 @@ export const handleUpdateProfile = createAsyncThunk(
   }
 );
 
-// ─────────────────────────────────────────────
-// SLICE
 const ProfileSlice = createSlice({
   name: "profile",
   initialState,

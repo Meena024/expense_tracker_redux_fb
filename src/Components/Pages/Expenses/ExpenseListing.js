@@ -29,7 +29,6 @@ const ExpenseListing = ({ exp }) => {
 
   return (
     <Row className="expense-item align-items-center p-3 m-2">
-      {/* 1st Column - Date */}
       <Col md={3}>
         <div className="date-box text-center p-3">
           <div className="fs-4">{day}</div>
@@ -38,20 +37,18 @@ const ExpenseListing = ({ exp }) => {
         </div>
       </Col>
 
-      {/* 2nd Column - Expense Info */}
       <Col md={6} className="d-flex justify-content-center ">
         <div className="expense-info p-3">
           <div className="row">
-            <div className="col-5 fs-3">${exp.amount}</div>
             <div className="col-7">
               <div className="fw-bold fs-5">{exp.category}</div>
               <div>{exp.description}</div>
             </div>
+            <div className="col-5 fs-3">${exp.amount}</div>
           </div>
         </div>
       </Col>
 
-      {/* 3rd Column - Buttons */}
       <Col md={3} className="d-flex justify-content-center ">
         <div className="button-group">
           <button onClick={handleEdit} className="btn btn-secondary">

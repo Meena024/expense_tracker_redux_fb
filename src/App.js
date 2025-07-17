@@ -35,10 +35,10 @@ function AuthInitializer() {
       }
     });
 
-    return unsubscribe; // Clean up listener
+    return unsubscribe;
   }, [dispatch]);
 
-  return null; // Pure logic, no UI
+  return null;
 }
 
 function App() {

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
-const AUTO_LOGOUT_TIME = 10 * 60 * 1000; // 10 minutes
-const WARNING_TIME = 15 * 1000; // 15 seconds
+const AUTO_LOGOUT_TIME = 10 * 60 * 1000;
+const WARNING_TIME = 15 * 1000;
 
 const useAutoLogout = (onWarning, onLogout, isActive = true) => {
   const timeoutRef = useRef(null);
@@ -41,6 +41,7 @@ const useAutoLogout = (onWarning, onLogout, isActive = true) => {
       clearTimeout(timeoutRef.current);
       clearTimeout(warningRef.current);
     };
+    // eslint-disable-next-line
   }, [isActive]);
 };
 

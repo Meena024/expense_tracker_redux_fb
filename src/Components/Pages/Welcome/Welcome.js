@@ -13,7 +13,6 @@ const Welcome = () => {
   const { toggleProfileForm } = useSelector((state) => state.Profile);
   const { user } = useSelector((state) => state.Auth);
 
-  // Fetch current user data from Firebase and sync to Redux
   useEffect(() => {
     const reloadUser = async () => {
       const currentUser = auth.currentUser;

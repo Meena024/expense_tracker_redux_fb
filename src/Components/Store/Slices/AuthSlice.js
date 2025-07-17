@@ -7,8 +7,6 @@ import {
   signOut,
 } from "firebase/auth";
 
-// ─────────────────────────────────────────────
-// Utility: Extract user info
 const formatUser = (user) => ({
   uid: user.uid,
   email: user.email,
@@ -17,8 +15,6 @@ const formatUser = (user) => ({
   verifiedUser: user.emailVerified,
 });
 
-// ─────────────────────────────────────────────
-// SIGNUP
 export const handleSignUp = createAsyncThunk(
   "Auth/handleSignUp",
   async ({ email, password }, thunkAPI) => {
@@ -36,8 +32,6 @@ export const handleSignUp = createAsyncThunk(
   }
 );
 
-// ─────────────────────────────────────────────
-// LOGIN
 export const handleLogin = createAsyncThunk(
   "Auth/handleLogin",
   async ({ email, password }, thunkAPI) => {
@@ -51,8 +45,6 @@ export const handleLogin = createAsyncThunk(
   }
 );
 
-// ─────────────────────────────────────────────
-// FORGOT PASSWORD
 export const handleForgotPassword = createAsyncThunk(
   "auth/forgotPassword",
   async (email, thunkAPI) => {
@@ -67,8 +59,6 @@ export const handleForgotPassword = createAsyncThunk(
   }
 );
 
-// ─────────────────────────────────────────────
-// LOGOUT
 export const handleLogout = createAsyncThunk(
   "Auth/handleLogout",
   async (_, thunkAPI) => {
@@ -87,8 +77,6 @@ export const handleLogout = createAsyncThunk(
   }
 );
 
-// ─────────────────────────────────────────────
-// SLICE
 const initialState = {
   user: null,
   status: "idle",
@@ -105,7 +93,6 @@ const AuthSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Signup
       .addCase(handleSignUp.pending, (state) => {
         state.status = "loading";
         state.error = null;
@@ -119,7 +106,6 @@ const AuthSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Login
       .addCase(handleLogin.pending, (state) => {
         state.status = "loading";
         state.error = null;
@@ -133,7 +119,6 @@ const AuthSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Logout
       .addCase(handleLogout.fulfilled, (state) => {
         state.user = null;
         state.status = "idle";

@@ -18,7 +18,6 @@ const AutoLogoutWrapper = ({ children }) => {
     try {
       await dispatch(handleLogout());
       dispatch(authActions.setUser(null));
-      localStorage.removeItem("uid");
       dispatch(setColor("#720455"));
       navigate("/login");
       setShowWarning(false);
