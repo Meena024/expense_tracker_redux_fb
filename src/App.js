@@ -1,45 +1,9 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-import { useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
 import Main from "./Components/Main";
 import { store } from "./Components/Store/store";
-import { auth } from "./Components/Firebase/initialize";
-import { authActions } from "./Components/Store/Slices/AuthSlice";
-
-function AuthInitializer() {
-  const dispatch = useDispatch();
-  const { color, isPremium } = useSelector((state) => state.Expense);
-
-  useEffect(() => {
-    document.documentElement.style.setProperty(
-      "--accent-color",
-      isPremium ? color : "#720455"
-    );
-  }, [isPremium, color]);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        dispatch(
-          authActions.setUser({
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          })
-        );
-      } else {
-        dispatch(authActions.setUser(null));
-      }
-    });
-
-    return unsubscribe;
-  }, [dispatch]);
-
-  return null;
-}
+import AuthInitializer from "./Components/AuthInitializer";
 
 function App() {
   return (
