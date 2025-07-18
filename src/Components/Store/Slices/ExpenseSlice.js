@@ -19,25 +19,6 @@ const ExpenseSlice = createSlice({
   name: "Expense",
   initialState,
   reducers: {
-    initializeMyExpense: (state, action) => {
-      state.MyExpenses = action.payload || [];
-      localStorage.setItem("expenses", JSON.stringify(state.MyExpenses));
-    },
-    initializeIsPremium: (state, action) => {
-      state.isPremium = action.payload;
-      localStorage.setItem("isPremium", JSON.stringify(action.payload));
-    },
-
-    setAddedExpense: (state, action) => {
-      state.MyExpenses = [action.payload, ...state.MyExpenses];
-      localStorage.setItem("expenses", JSON.stringify(state.MyExpenses));
-    },
-    setDeleteExpense: (state, action) => {
-      state.MyExpenses = state.MyExpenses.filter(
-        (expense) => expense.id !== action.payload
-      );
-      localStorage.setItem("expenses", JSON.stringify(state.MyExpenses));
-    },
     setEditExpense: (state, action) => {
       state.MyExpenses = state.MyExpenses.map((expense) =>
         expense.id === action.payload.id ? action.payload : expense
@@ -112,12 +93,8 @@ const ExpenseSlice = createSlice({
 });
 
 export const {
-  initializeMyExpense,
-  initializeIsPremium,
   setExpenseToEdit,
   clearExpenseToEdit,
-  setAddedExpense,
-  setDeleteExpense,
   setEditExpense,
   setIsPremium,
   setColor,

@@ -29,7 +29,7 @@ const MyExpense = () => {
 
   const premiumHandler = async () => {
     try {
-      await dispatch(setPremium(true)).unwrap();
+      await dispatch(setPremium(true));
       dispatch(setIsPremium(true));
       console.log("Premium activated.");
     } catch (err) {
@@ -50,13 +50,10 @@ const MyExpense = () => {
 
     const csvContent = csvRows.map((row) => row.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "expenses.csv";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "expenses.csv";
+    link.click();
   };
 
   useEffect(() => {
@@ -70,7 +67,8 @@ const MyExpense = () => {
     };
 
     fetchData();
-  }, [dispatch]);
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     if (totalExpense < 100 && isPremium) {
