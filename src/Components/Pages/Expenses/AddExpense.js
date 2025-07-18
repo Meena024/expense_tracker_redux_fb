@@ -48,6 +48,7 @@ const AddExpense = () => {
         await dispatch(editExpense({ id: expenseToEdit.id, exp: expense }));
         dispatch(setEditExpense({ ...expense, id: expenseToEdit.id }));
         dispatch(clearExpenseToEdit());
+        console.log("Expense updated successfully");
       } else {
         await dispatch(addExpense(expense));
         console.log("Expense added successfully");

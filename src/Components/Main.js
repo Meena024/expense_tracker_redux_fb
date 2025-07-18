@@ -1,7 +1,5 @@
-import { useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { handleLogout } from "./Store/Slices/AuthSliceThunk";
 import { authActions } from "./Store/Slices/AuthSlice";
 import { setColor } from "./Store/Slices/ExpenseSlice";
@@ -21,25 +19,6 @@ const Main = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.Auth.user);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(getAuth(), (firebaseUser) => {
-      if (firebaseUser) {
-        dispatch(
-          authActions.setUser({
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            displayName: firebaseUser.displayName,
-            photoURL: firebaseUser.photoURL,
-          })
-        );
-      } else {
-        dispatch(authActions.setUser(null));
-      }
-    });
-
-    return () => unsubscribe();
-  }, [dispatch]);
-
   const logoutHandler = async () => {
     try {
       await dispatch(handleLogout());
@@ -52,7 +31,8 @@ const Main = () => {
   };
 
   return (
-    <div>
+    <AutoLogoutWrapper>
+      {/* <div> */}
       {user && (
         <div className={classes.button}>
           <button onClick={logoutHandler}>Logout</button>
@@ -60,21 +40,20 @@ const Main = () => {
         </div>
       )}
 
-      <AutoLogoutWrapper>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/welcome" element={<Welcome />} />
-          <Route path="/addExpense" element={<AddExpense />} />
-          <Route path="/myExpense" element={<MyExpense />} />
-          <Route
-            path="*"
-            element={<div className="text-light">Page Not Found.</div>}
-          />
-        </Routes>
-      </AutoLogoutWrapper>
-    </div>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/welcome" element={<Welcome />} />
+        <Route path="/addExpense" element={<AddExpense />} />
+        <Route path="/myExpense" element={<MyExpense />} />
+        <Route
+          path="*"
+          element={<div className="text-light">Page Not Found.</div>}
+        />
+      </Routes>
+    </AutoLogoutWrapper>
+    // </div>
   );
 };
 

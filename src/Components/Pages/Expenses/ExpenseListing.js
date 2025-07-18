@@ -12,6 +12,7 @@ const ExpenseListing = ({ exp }) => {
   const handleDelete = async () => {
     try {
       await dispatch(deleteExpense(exp.id));
+      console.log("Expense Deleted successfully!");
     } catch (err) {
       console.error("Failed to delete expense:", err.message);
     }

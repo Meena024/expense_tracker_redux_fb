@@ -68,9 +68,6 @@ export const handleLogout = createAsyncThunk(
       localStorage.removeItem("expenses");
       localStorage.removeItem("isPremium");
       localStorage.removeItem("themeColor");
-      localStorage.removeItem(
-        "firebase:host:expensetracker-a08e8-default-rtdb.firebaseio.com"
-      );
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message || "Logout failed");
     }
