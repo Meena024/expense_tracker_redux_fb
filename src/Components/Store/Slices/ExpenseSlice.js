@@ -12,32 +12,19 @@ const initialState = {
   MyExpenses: JSON.parse(localStorage.getItem("expenses")) || [],
   expenseToEdit: null,
   isPremium: JSON.parse(localStorage.getItem("isPremium")) || false,
-  color: localStorage.getItem("themeColor") || "rgb(78,70,70)",
+  color: localStorage.getItem("themeColor") || "#720455",
 };
 
 const ExpenseSlice = createSlice({
   name: "Expense",
   initialState,
   reducers: {
-    setEditExpense: (state, action) => {
-      state.MyExpenses = state.MyExpenses.map((expense) =>
-        expense.id === action.payload.id ? action.payload : expense
-      );
-      localStorage.setItem("expenses", JSON.stringify(state.MyExpenses));
-    },
-
     setExpenseToEdit: (state, action) => {
       state.expenseToEdit = action.payload;
     },
     clearExpenseToEdit: (state) => {
       state.expenseToEdit = null;
     },
-
-    setIsPremium: (state, action) => {
-      state.isPremium = action.payload;
-      localStorage.setItem("isPremium", JSON.stringify(action.payload));
-    },
-
     setColor: (state, action) => {
       state.color = action.payload;
       localStorage.setItem("themeColor", action.payload);
@@ -67,16 +54,14 @@ const ExpenseSlice = createSlice({
         );
         localStorage.setItem("expenses", JSON.stringify(state.MyExpenses));
       })
-
-      .addCase(setPremium.fulfilled, (state) => {
-        state.isPremium = true;
-        localStorage.setItem("isPremium", "true");
+      .addCase(setPremium.fulfilled, (state, action) => {
+        state.isPremium = action.payload;
+        localStorage.setItem("isPremium", action.payload);
       })
       .addCase(fetchPremiumStatus.fulfilled, (state, action) => {
         state.isPremium = action.payload;
         localStorage.setItem("isPremium", JSON.stringify(action.payload));
       })
-
       .addCase(addExpense.rejected, (_, action) => {
         console.error("Add failed:", action.payload);
       })
@@ -92,12 +77,7 @@ const ExpenseSlice = createSlice({
   },
 });
 
-export const {
-  setExpenseToEdit,
-  clearExpenseToEdit,
-  setEditExpense,
-  setIsPremium,
-  setColor,
-} = ExpenseSlice.actions;
+export const { setExpenseToEdit, clearExpenseToEdit, setColor } =
+  ExpenseSlice.actions;
 
 export default ExpenseSlice.reducer;

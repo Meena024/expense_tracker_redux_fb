@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Card from "../../UI/Card";
 import ExpenseListing from "./ExpenseListing";
 import classes from "../../Styles.module.css";
-import { setColor, setIsPremium } from "../../Store/Slices/ExpenseSlice";
+import { setColor } from "../../Store/Slices/ExpenseSlice";
 
 const MyExpense = () => {
   const dispatch = useDispatch();
@@ -30,7 +30,6 @@ const MyExpense = () => {
   const premiumHandler = async () => {
     try {
       await dispatch(setPremium(true));
-      dispatch(setIsPremium(true));
       console.log("Premium activated.");
     } catch (err) {
       console.error("Error activating premium:", err);
@@ -73,9 +72,11 @@ const MyExpense = () => {
   useEffect(() => {
     if (totalExpense < 100 && isPremium) {
       dispatch(setPremium(false));
-      dispatch(setIsPremium(false));
+      dispatch(setColor("#720455"));
+      console.log("Premium deactivated! Expense fell below $100");
     }
-  }, [totalExpense, isPremium, dispatch]);
+    // eslint-disable-next-line
+  }, [totalExpense, dispatch]);
 
   return (
     <Card className="m-5 p-3">

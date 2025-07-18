@@ -4,13 +4,12 @@ import Card from "../../UI/Card";
 import classes from "../Authentication/SignUp.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { addExpense, editExpense } from "../../Store/Slices/ExpenseSliceThunk";
-import {
-  clearExpenseToEdit,
-  setEditExpense,
-} from "../../Store/Slices/ExpenseSlice";
+import { clearExpenseToEdit } from "../../Store/Slices/ExpenseSlice";
+import { useNavigate } from "react-router";
 
 const AddExpense = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const expenseToEdit = useSelector((state) => state.Expense.expenseToEdit);
 
   const [date, setDate] = useState("");
@@ -46,9 +45,9 @@ const AddExpense = () => {
     try {
       if (expenseToEdit) {
         await dispatch(editExpense({ id: expenseToEdit.id, exp: expense }));
-        dispatch(setEditExpense({ ...expense, id: expenseToEdit.id }));
         dispatch(clearExpenseToEdit());
         console.log("Expense updated successfully");
+        navigate("/myExpense");
       } else {
         await dispatch(addExpense(expense));
         console.log("Expense added successfully");
